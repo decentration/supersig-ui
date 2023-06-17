@@ -1,35 +1,54 @@
-import { useTranslation } from '@polkadot/app-treasury/translate';
-import { CardSummary } from '@polkadot/react-components';
-import { FormatBalance } from '@polkadot/react-query';
-import React from 'react';
-import 'supersig-types';
+import { Box, Card, Grid, Typography } from "@mui/material";
+import { FC } from "react";
 
-type SortedAddress = { address: string; isFavorite: boolean };
-
-interface Props {
-  sigCnt: SortedAddress[] | undefined;
-  totalProposals: number;
-  totalBalance: string;
+interface SummaryProps {
+  totalSupersigs: number;
+  liveProposalsCount: number;
+  totalFunds: string
 }
 
-function Summary({ sigCnt, totalBalance, totalProposals }: Props) {
-  const { t } = useTranslation();
-
-  return (
-    <div style={{ display: 'flex', marginBottom: '30px' }}>
-      {sigCnt && (
-        <CardSummary label={t<string>('Total Supersigs')}>
-          <p>{sigCnt.length}</p>
-        </CardSummary>
-      )}
-      <CardSummary label={t<string>('Live Proposals')}>
-        <p>{totalProposals}</p>
-      </CardSummary>
-      <CardSummary label={t<string>('Total Funds')}>
-        <FormatBalance className='result' value={totalBalance} />
-      </CardSummary>
-    </div>
-  );
+const sxs = {
+  criteria: {
+    fontWeight: "bold",
+    marginBottom: 1.5 
+  },
+  quantity: {
+    fontSize: "1.2rem", fontWeight: "regular"
+  }
 }
 
-export default React.memo(Summary);
+const Summary : FC<SummaryProps> = ({
+  totalSupersigs = 0,
+  liveProposalsCount = 0,
+  totalFunds = '0'
+}) => {
+  return (    
+    <Grid container spacing = {2}>
+      {
+        [
+          { criteria: 'Total Supersigs', quantity: totalSupersigs },
+          { criteria: 'Active Proposals', quantity: liveProposalsCount },
+          { criteria: 'Total Funds', quantity: totalFunds }
+        ].map(({ criteria, quantity }, index) => (
+          <Grid item xs = {4} key = {index} >
+            <Card sx = {{paddingX: 3, paddingY: 1.5, borderRadius: 2}} variant="outlined">
+              <Typography variant="h6" component="div">
+                <Box sx = {{ ...sxs.criteria }}>
+                  { criteria }
+                </Box>
+              </Typography>
+    
+              <Typography component="div">
+                <Box sx = {{ ...sxs.quantity}}>
+                  { quantity }
+                </Box>
+              </Typography>
+            </Card>
+          </Grid>  
+        ))
+      }
+    </Grid>
+  )
+}
+
+export default Summary;

@@ -1,63 +1,128 @@
-// Copyright 2017-2023 @polkadot/app-supersig authors & contributors
-// SPDX-License-Identifier: Apache-2.0
-
-import { Button, SummaryBox, Table } from '@polkadot/react-components';
+import AddIcon from '@mui/icons-material/Add';
 import {
-  useApi,
-  useCall,
-  useFavorites,
-  useToggle,
-} from '@polkadot/react-hooks';
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import { BN_ZERO } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
-// import { useTranslation } from '../translate';
 import Summary from './Summary';
-import Address from './Table';
-import type { ComponentProps as Props } from './types';
-import { useLoadingDelay } from './useLoadingDelay';
-// import CreateModal from '../../../../page-accounts/src/modals/Create';
-import { largeNumSum } from './util';
+import { useApi } from '../../contexts/Api';
+import { Account, Balance, ProposalInfo, SupersigInfo } from '../../types';
+import { formatBalance, getFreeBalance, getReservedBalance } from '../../utils';
 
-type SortedAddress = { address: string; isFavorite: boolean };
+const sxs = {
+  dashboard: {
+    padding: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3 
+  },
+  button: {
+    borderRadius: 8,
+    border: '1px solid rgb(221, 221, 221)',
+    color: 'rgb(24, 24, 24)'    
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: 2    
+  }
+}
 
-const STORE_FAVS = 'accounts:favorites';
+export const Dashboard = () => {
+  const { api, ss58Format, isConnecting, decimals } = useApi();
+  const [loading, setLoading] = useState(true);
+  const [nonce, setNonce] = useState(0);
+  const [supersigAccounts, setSupersigAccounts] = useState<string[]>([]);
+  const [supersigs, setSupersigs] = useState<Array<SupersigInfo>>([]);
 
-function Overview({
-  className = '',
-  onStatusChange,
-}: Props): React.ReactElement<Props> {
-  //   const { t } = useTranslation();
-  const [isCreateOpen, toggleCreate] = useToggle(false);
-  const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
-  const [sortedAddresses, setSortedAddresses] = useState<
-    SortedAddress[] | undefined
-  >();
-  const filterOn = '';
-  const [totalProposalCnt, setTotalProposalCnt] = useState<number>(0);
-  const [totalBalance, setTotalBalance] = useState('');
-  const isLoading = useLoadingDelay();
-  const { api } = useApi();
-  // as unknown as { api: CustomApi };
-  const [allAddresses, setAllAddresses] = useState<string[]>([]);
-  const supersig_nonce = useCall(api.query.supersig?.nonceSupersig);
+  const liveProposalsCount: number = supersigs.reduce(
+    (sum, supersig) => sum + supersig.proposals.proposals_info.length,
+    0
+  );
 
-  const headerRef = useRef<([React.ReactNode?, string?, number?] | false)[]>([
-    ['Supersig Organisations', 'start', 2],
-    ['live proposals', 'number'],
-    ['balance of (members)', 'number'],
-    [undefined, 'media--1500'],
-    ['Supersig balance', 'balances'],
-    [undefined, 'media--1400', 2],
-    [],
-  ]);
+  const totalFunds: Balance = supersigs.reduce(
+    (sum: Balance, supersig: SupersigInfo) => sum.add(supersig.balance),
+    BN_ZERO
+  );
 
   useEffect(() => {
-    async function getSuperSigAddress() {
+    const loadNonce = async () => {
+      if (!api) return;
+
+      await api.query.supersig.nonceSupersig((_nonce: any) =>
+        setNonce(Number(_nonce.toPrimitive()))
+      );
+    };
+    loadNonce();
+  }, [api]);
+
+  const fetchSupersigInfo = async (account: Account): Promise<SupersigInfo> => {
+    const balance = await getFreeBalance(api, account);
+
+    const memberAccounts: Array<Account> = (
+      await api.rpc.superSig.listMembers(account)
+    ).toPrimitive();
+
+    const members = await Promise.all(
+      memberAccounts.map(async (member) => {
+        const account = member[0];
+        const free = await getFreeBalance(api, account);
+        const reserved = await getReservedBalance(api, account);
+        return { account, balance: free.add(reserved) };
+      })
+    );
+
+    const proposals: ProposalInfo = (
+      await api.rpc.superSig.listProposals(account)
+    ).toPrimitive();
+
+    return { account, balance, members, proposals };
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+
+      const infos: Array<SupersigInfo> = [];
+
+      for await (const account of supersigAccounts) {
+        const info = await fetchSupersigInfo(account);
+        infos.push(info);
+      }
+
+      setSupersigs(infos);
+
+      setLoading(false);
+    };
+
+    init();
+  }, [supersigAccounts]);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const getSuperSigAddress = async () => {
       const modl = '0x6d6f646c';
       const pallet_id = api.consts.supersig.palletId.toString();
       const addressArray: string[] = [];
+
+      function* asyncGenerator() {
+        let i = 0;
+
+        while (i < nonce) {
+          yield i++;
+        }
+      }
 
       const twoDigit = (number: number): string => {
         const twodigit = number >= 10 ? number : '0' + number.toString();
@@ -65,156 +130,113 @@ function Overview({
         return twodigit.toString();
       };
 
-      function* asyncGenerator() {
-        let i = 0;
-
-        while (i < Number(supersig_nonce)) {
-          yield i++;
-        }
-      }
-
       for await (const num of asyncGenerator()) {
         const supersig_concat =
           modl +
           pallet_id.slice(2, pallet_id.length) +
           twoDigit(num) +
           '00000000000000000000000000000000000000';
-        const account = encodeAddress(supersig_concat);
+        const account = encodeAddress(supersig_concat, ss58Format);
 
         try {
-          const members: any[] = (
-            await api.rpc.superSig.listMembers(account)
-          ).toArray();
+          const data = await api.rpc.superSig.listMembers(account);
+          const members = data.toArray();
 
           if (members.length > 0) {
             addressArray.push(account.toString());
           }
         } catch (err) {
-          // TODO: error handling
+          /**An error occured */
         }
       }
 
-      setAllAddresses(addressArray);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getSuperSigAddress();
-  }, [api, supersig_nonce]);
-
-  useEffect((): void => {
-    setSortedAddresses(
-      allAddresses
-        .map(
-          (address: any): SortedAddress => ({
-            address,
-            isFavorite: favorites.includes(address),
-          })
-        )
-        .sort((a: any, b: any): number =>
-          a.isFavorite === b.isFavorite ? 0 : b.isFavorite ? 1 : -1
-        )
-    );
-
-    const setbalance = async () => {
-      let totalbalances = '';
-      let totalproposal = 0;
-
-      await Promise.all(
-        allAddresses.map(async (address) => {
-          const balancesAll = await api.derive.balances?.all(address);
-          const sigBalance = balancesAll.freeBalance
-            .add(balancesAll.reservedBalance)
-            .toString();
-
-          if (totalbalances.length > sigBalance.length) {
-            totalbalances = largeNumSum(totalbalances, sigBalance);
-          } else {
-            totalbalances = largeNumSum(sigBalance, totalbalances);
-          }
-
-          const proposals = await api.rpc.superSig.listProposals(address);
-
-          totalproposal = totalproposal + proposals.proposals_info.length;
-        })
-      );
-      setTotalProposalCnt(totalproposal);
-      setTotalBalance(totalbalances);
+      setSupersigAccounts(addressArray);
     };
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    setbalance();
-  }, [allAddresses, favorites]);
+    getSuperSigAddress();
+  }, [api, nonce]);
 
   return (
-    <div className={className} style={{ overflow: 'auto' }}>
-      {isCreateOpen && (
-        <CreateModal onClose={toggleCreate} onStatusChange={onStatusChange} />
-      )}
-      <StyledDiv>
-        <SummaryBox className='header-box'>
-          <Summary
-            sigCnt={sortedAddresses}
-            totalBalance={totalBalance}
-            totalProposals={totalProposalCnt}
-          />
-          <Button.Group>
-            <a href={'#/organisations/create/0x080000'}>
+    <>
+      <Box sx={{ ...sxs.dashboard }}>
+        <Summary
+          totalSupersigs={supersigs.length}
+          liveProposalsCount={liveProposalsCount}
+          totalFunds={formatBalance(totalFunds, decimals)}
+        />
+
+        <Box sx={{ ...sxs.buttonGroup }}>
+          {
+            [
+              {   
+                title: 'Create Org',
+                clickHandler: () => false 
+              },
+              {   
+                title: 'Add Member',
+                clickHandler: () => false
+              },
+              {   
+                title: 'Propose',
+                clickHandler: () => false
+              },
+            ].map(({ title, clickHandler }, index) => (
               <Button
-                className='send-button'
-                icon='plus'
-                key='create'
-                label={'create an org'}
-                onClick={() => {
-                  /** TODO: */
-                }}
-              />
-            </a>
-          </Button.Group>
-        </SummaryBox>
-      </StyledDiv>
-      <Table
-        // empty={!isLoading && sortedAddresses && ('no addresses saved yet, add any existing address')}
-        header={headerRef.current}
-        // withCollapsibleRows
+                startIcon={<AddIcon />}
+                variant='outlined'
+                sx={{ ...sxs.button }}
+                onClick={clickHandler}
+                key = {index}
+              >
+                { title }
+              </Button>  
+            ))
+          }
+        </Box>
+
+        <Typography variant='h5'>Organisations</Typography>
+
+        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Active Proposals</TableCell>
+              <TableCell>Members (Balance)</TableCell>
+              <TableCell>Supersig Balance</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {supersigs.map(
+              ({ account, proposals, members, balance }, index) => (
+                <TableRow
+                  key={index}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component='th' scope='row'>
+                    {account}
+                  </TableCell>
+                  <TableCell>{proposals.proposals_info.length}</TableCell>
+                  <TableCell>
+                    {formatBalance(
+                      members.reduce(
+                        (sum: Balance, { balance }) => sum.add(balance),
+                        BN_ZERO
+                      ),
+                      decimals
+                    )}
+                  </TableCell>
+                  <TableCell>{formatBalance(balance, decimals)}</TableCell>
+                </TableRow>
+              )
+            )}
+          </TableBody>
+        </Table>
+      </Box>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isConnecting || loading}
       >
-        {!isLoading &&
-          sortedAddresses?.map(
-            ({ address, isFavorite }): React.ReactNode => (
-              <Address
-                address={address}
-                filter={filterOn}
-                isFavorite={isFavorite}
-                key={address}
-                toggleFavorite={toggleFavorite}
-              />
-            )
-          )}
-      </Table>
-    </div>
+        <CircularProgress color='inherit' />
+      </Backdrop>
+    </>
   );
-}
-
-const StyledDiv = styled.div`
-  .ui--Dropdown {
-    width: 15rem;
-  }
-
-  .header-box {
-    .dropdown-section {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-right: 30px;
-    }
-
-    .ui--Button-Group {
-      margin-left: auto;
-    }
-  }
-`;
-
-export default React.memo(styled(Overview)`
-  .summary-box-contacts {
-    align-items: center;
-  }
-`);
+};
