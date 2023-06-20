@@ -12588,7 +12588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:latest":
+"node-gyp@npm:^9.4.0, node-gyp@npm:latest":
   version: 9.4.0
   resolution: "node-gyp@npm:9.4.0"
   dependencies:
@@ -15969,6 +15969,7 @@ __metadata:
     dnslink-cloudflare: ^3.0.0
     extensionless: ^1.4.5
     i18next-scanner: ^4.2.0
+    node-gyp: ^9.4.0
     react: ^18.2.0
     react-dom: ^18.2.0
     react-is: ^18.2.0
