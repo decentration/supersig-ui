@@ -9,8 +9,7 @@ import React from 'react';
 
 import { useApi } from '../../contexts/Api/index.js';
 import { formatBalance } from '../../utils/index.js';
-
-import { } from '@polkadot/react-components';
+import { CallExpander } from '@polkadot/react-params';
 
 interface ProposalDetailInterface {
   proposals: ProposalInfo;
@@ -150,6 +149,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                         content={provider}
                         heading='proposer'
                       />
+                      <CallExpander value={ extrinsicCall } />
                     </AccordionDetails>
                   </Accordion>
                 </AccordionDetails>
