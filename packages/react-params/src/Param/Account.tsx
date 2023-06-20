@@ -12,7 +12,7 @@ import { keyring } from '@polkadot/ui-keyring';
 import Bare from './Bare.js';
 import Enum from './Enum.js';
 
-function isValidAddress (value?: string | null): boolean {
+function isValidAddress(value?: string | null): boolean {
   if (value) {
     try {
       keyring.decodeAddress(value);
@@ -26,7 +26,7 @@ function isValidAddress (value?: string | null): boolean {
   return false;
 }
 
-function Account (props: Props): React.ReactElement<Props> {
+function Account(props: Props): React.ReactElement<Props> {
   const { className = '', defaultValue: { value }, isDisabled, isError, label, onChange, type, withLabel } = props;
   const [defaultValue] = useState(() => (value as string)?.toString());
 
@@ -56,7 +56,7 @@ function Account (props: Props): React.ReactElement<Props> {
         isInput
         label={label}
         onChange={_onChange}
-        placeholder='5...'
+        placeholder={defaultValue}
         type='allPlus'
         withEllipsis
         withLabel={withLabel}

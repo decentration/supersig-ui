@@ -11,7 +11,7 @@ const webpack = require('webpack');
 
 const findPackages = require('../../scripts/findPackages.cjs');
 
-function createWebpack (context, mode = 'production') {
+function createWebpack(context, mode = 'production') {
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(context, `../${dir}/src`);
 
@@ -46,7 +46,7 @@ function createWebpack (context, mode = 'production') {
             'css-loader'
           ]
         },
-        { 
+        {
           exclude: /(node_modules)/,
           test: /\.(ts|tsx)$/,
           use: [
@@ -110,7 +110,10 @@ function createWebpack (context, mode = 'production') {
       globalObject: '(typeof self !== \'undefined\' ? self : this)',
       hashFunction: 'xxhash64',
       path: path.join(context, 'build'),
-      publicPath: ''
+      publicPath: '/'
+    },
+    devServer: {
+      historyApiFallback: true
     },
     performance: {
       hints: false

@@ -133,7 +133,7 @@ export const Dashboard = () => {
       const palletId = api.consts.supersig.palletId.toString();
       const addressArray: string[] = [];
 
-      function * asyncGenerator () {
+      function* asyncGenerator() {
         let i = 0;
 
         while (i < nonce) {
@@ -213,10 +213,10 @@ export const Dashboard = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Active Proposals</TableCell>
-              <TableCell>Members (Balance)</TableCell>
-              <TableCell>Supersig Balance</TableCell>
+              <TableCell>supersig collectives</TableCell>
+              <TableCell>live proposals</TableCell>
+              <TableCell>balances of (members)</TableCell>
+              <TableCell>supersig balance</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -251,12 +251,6 @@ export const Dashboard = () => {
                   </TableCell>
                   <TableCell>
                     {formatBalance(balance, decimals)} UNIT
-                    <p>
-                      transferrable: {formatBalance(freeBalance, decimals)} UNIT
-                    </p>
-                    <p>
-                      reserved: {formatBalance(reservedBalance, decimals)} UNIT
-                    </p>
                   </TableCell>
                 </TableRow>
               )

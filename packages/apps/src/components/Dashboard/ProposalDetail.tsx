@@ -10,6 +10,7 @@ import React from 'react';
 import { useApi } from '../../contexts/Api/index.js';
 import { formatBalance } from '../../utils/index.js';
 import { CallExpander } from '@polkadot/react-params';
+import { ExpandMoreIcon } from '../Icon/index.js';
 
 interface ProposalDetailInterface {
   proposals: ProposalInfo;
@@ -88,6 +89,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
       <AccordionSummary
         aria-controls='panel1a-content'
         id='panel1a-header'
+        expandIcon={ExpandMoreIcon}
       >
         {proposals.proposals_info.length}
       </AccordionSummary>
@@ -111,6 +113,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                 <AccordionSummary
                   aria-controls='panel1a-content'
                   id='panel1a-header'
+                  expandIcon={ExpandMoreIcon}
                 >
                   {`${section}.${method}`}
                 </AccordionSummary>
@@ -119,6 +122,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                     <AccordionSummary
                       aria-controls='panel1a-content'
                       id='panel1a-header'
+                      expandIcon={ExpandMoreIcon}
                     >
                       {`Voters(${voters.length}/${proposals.no_of_members})`}
                     </AccordionSummary>
@@ -141,6 +145,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                     <AccordionSummary
                       aria-controls='panel1a-content'
                       id='panel1a-header'
+                      expandIcon={ExpandMoreIcon}
                     >
                       Proposal Info
                     </AccordionSummary>
@@ -149,7 +154,8 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                         content={provider}
                         heading='proposer'
                       />
-                      <CallExpander value={ extrinsicCall } />
+                      <br />
+                      <CallExpander value={extrinsicCall} />
                     </AccordionDetails>
                   </Accordion>
                 </AccordionDetails>
