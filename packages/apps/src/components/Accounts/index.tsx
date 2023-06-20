@@ -65,8 +65,7 @@ export const Accounts = () => {
           <TableBody>
             {balances.map(
               (balance, index) =>
-                emptyShow ||
-                (!balance.eq(BN_ZERO) && (
+                (emptyShow || !balance.eq(BN_ZERO)) && (
                   <TableRow
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -84,7 +83,7 @@ export const Accounts = () => {
                     </TableCell>
                     <TableCell>{formatBalance(balance, decimals)}</TableCell>
                   </TableRow>
-                ))
+                )
             )}
           </TableBody>
         </Table>
