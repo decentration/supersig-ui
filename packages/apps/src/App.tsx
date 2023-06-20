@@ -1,7 +1,7 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Navigate,
@@ -12,8 +12,13 @@ import './App.css';
 
 import { Header, Accounts, Dashboard, Sidebar } from './components/index.js';
 import { ToastProvider, ChainProvider, ApiProvider, AccountsProvider } from './contexts/index.js';
+import Submission from './components/Extrinsics/Submission.js';
+import { DecodedExtrinsic } from './components/Extrinsics/types.js';
+import Decoder from './components/Extrinsics/Decoder.js';
 
 const App = () => {
+  const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
+
   return (
     <ToastProvider>
       <ChainProvider>
@@ -40,6 +45,16 @@ const App = () => {
                     <Route
                       path='/organisations/dashboard'
                       element={<Dashboard />}
+                    />
+                    <Route path='/organisations/create' element={<Submission defaultValue={decoded} />} />
+                    <Route
+                      element={
+                        <Decoder
+                          defaultValue={decoded && decoded.hex}
+                          setLast={setDecoded}
+                        />
+                      }
+                      path='/organisations/create/:encoded?'
                     />
                     <Route path='/wallet/accounts' element={<Accounts />} />
 
