@@ -1,0 +1,65 @@
+{
+  "extends": "@polkadot/dev/config/tsconfig.json",
+	"compilerOptions": {
+    "composite": true,
+    /**
+     * NOTE We have a lot of these, for ergonomic purposes it is
+     * better just letting the status-quo be (for the time being)
+     *
+     * Reverts https://github.com/polkadot-js/dev/pull/1074
+     **/
+    "noPropertyAccessFromIndexSignature": false,
+		"paths": {
+      "@polkadot/apps": ["apps/src/index.tsx"],
+      "@polkadot/apps/Root": ["apps/src/Root.tsx"],
+      "@polkadot/apps-config": ["apps-config/src/index.ts"],
+      "@polkadot/apps-config/endpoints": ["apps-config/src/endpoints/index.ts"],
+      "@polkadot/apps-config/endpoints/*": ["apps-config/src/endpoints/*.ts"],
+      "@polkadot/apps-config/links/*": ["apps-config/src/links/*.ts"],
+      "@polkadot/apps-config/settings/*": ["apps-config/src/settings/*.ts"],
+      "@polkadot/apps-config/ui/logos/*": ["apps-config/src/ui/logos/*/index.ts"],
+      "@polkadot/react-api": ["react-api/src/index.ts"],
+      "@polkadot/react-api/hoc": ["react-api/src/hoc/index.ts"],
+      "@polkadot/react-api/util": ["react-api/src/util/index.ts"],
+      "@polkadot/react-api/*": ["react-api/src/*.ts"],
+      "@polkadot/react-components": ["react-components/src/index.ts"],
+      "@polkadot/react-components/i18n": ["react-components/src/i18n/index.ts"],
+      "@polkadot/react-components/i18n/*": ["react-components/src/i18n/*.ts"],
+      "@polkadot/react-components/InputConsts/*": ["react-components/src/InputConsts/*.ts"],
+      "@polkadot/react-components/Popup/*": ["react-components/src/Popup/*.ts"],
+      "@polkadot/react-components/Status/*": ["react-components/src/Status/*.ts"],
+      "@polkadot/react-components/styled": ["react-components/src/styled.ts"],
+      "@polkadot/react-components/styles": ["react-components/src/styles/index.ts"],
+      "@polkadot/react-components/styles/*": ["react-components/src/styles/*.ts"],
+      "@polkadot/react-components/types": ["react-components/src/types.ts"],
+      "@polkadot/react-components/util": ["react-components/src/util/index.ts"],
+      "@polkadot/react-components/util/types": ["react-components/src/util/types.ts"],
+      "@polkadot/react-components/*": ["react-components/src/*.tsx"],
+      "@polkadot/react-hooks": ["react-hooks/src/index.ts"],
+      "@polkadot/react-hooks/ctx/types": ["react-hooks/src/ctx/types.ts"],
+      "@polkadot/react-hooks/ctx/*": ["react-hooks/src/ctx/*.tsx"],
+      "@polkadot/react-hooks/*": ["react-hooks/src/*.ts"],
+      "@polkadot/react-params": ["react-params/src/index.tsx"],
+      "@polkadot/react-params/Param/*": ["react-params/src/Param/*.tsx"],
+      "@polkadot/react-params/types": ["react-params/src/types.ts"],
+      "@polkadot/react-params/util": ["react-params/src/util.ts"],
+      "@polkadot/react-params/valueToText": ["react-params/src/valueToText.tsx"],
+      "@polkadot/react-query": ["react-query/src/index.ts"],
+      "@polkadot/react-signer": ["react-signer/src/index.tsx"],
+      "@polkadot/react-signer/signers": ["react-signer/src/signers/index.ts"],
+      "@polkadot/test-support/api": ["test-support/src/api/index.ts"],
+      "@polkadot/test-support/creation/*": ["test-support/src/creation/*.ts"],
+      "@polkadot/test-support/hooks": ["test-support/src/hooks/index.ts"],
+      "@polkadot/test-support/keyring": ["test-support/src/keyring/index.ts"],
+      "@polkadot/test-support/mockData": ["test-support/src/mockData/index.ts"],
+      "@polkadot/test-support/pages/*": ["test-support/src/pages/*.tsx"],
+      "@polkadot/test-support/pagesElements": ["test-support/src/pagesElements/index.ts"],
+      "@polkadot/test-support/react": ["test-support/src/react/index.ts"],
+      "@polkadot/test-support/substrate": ["test-support/src/substrate/index.ts"],
+      "@polkadot/test-support/types": ["test-support/src/types.ts"],
+      "@polkadot/test-support/transaction": ["test-support/src/transaction/index.ts"],
+      "@polkadot/test-support/utils": ["test-support/src/utils/index.ts"],
+      "react": ["./node_modules/@types/react"]
+    }
+	}
+ }
