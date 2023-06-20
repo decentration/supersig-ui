@@ -213,10 +213,10 @@ export const Dashboard = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell>supersig collectives</TableCell>
-              <TableCell>live proposals</TableCell>
-              <TableCell>balances of (members)</TableCell>
-              <TableCell>supersig balance</TableCell>
+              <TableCell>Supersig Collectives</TableCell>
+              <TableCell>Live Proposals</TableCell>
+              <TableCell>Balances of (Members)</TableCell>
+              <TableCell>Supersig Balance</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -224,10 +224,8 @@ export const Dashboard = () => {
               (
                 { account,
                   balance,
-                  freeBalance,
                   members,
-                  proposals,
-                  reservedBalance },
+                  proposals },
                 index
               ) => (
                 <TableRow
