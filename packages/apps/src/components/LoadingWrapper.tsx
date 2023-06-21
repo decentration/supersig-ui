@@ -10,9 +10,9 @@ interface LoadingWrapperProps {
 }
 
 export const LoadingWrapper = ({ children }: LoadingWrapperProps) => {
-  const { isApiReady } = useApi();
+  const { isApiReady, api } = useApi();
 
-  return isApiReady ? (
+  return api && isApiReady ? (
     children
   ) : (
     <Backdrop

@@ -240,6 +240,7 @@ export const Dashboard = () => {
                   </TableCell>
                   <TableCell>
                     <ProposalDetail
+                      supersigAccount={account}
                       members={members}
                       proposals={proposals}
                     />

@@ -4,15 +4,18 @@
 import type { FC } from 'react';
 import type { Account, Balance, MemberInfo, MemberRole, ProposalDetails, ProposalInfo } from '../../types/index.js';
 
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Link } from '@mui/material';
 import React from 'react';
 
 import { useApi } from '../../contexts/Api/index.js';
 import { formatBalance } from '../../utils/index.js';
 import { CallExpander } from '@polkadot/react-params';
+import { decodeAddress } from '@polkadot/util-crypto';
+import { u8aToHex } from '@polkadot/util';
 import { ExpandMoreIcon } from '../Icon/index.js';
 
 interface ProposalDetailInterface {
+  supersigAccount: Account;
   proposals: ProposalInfo;
   members: Array<MemberInfo>;
 }
@@ -68,7 +71,7 @@ const Voter: FC<VoterInterface> = ({ balance, role, voter }) => {
   );
 };
 
-export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
+export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigAccount,
   proposals }) => {
   const { api } = useApi();
 
@@ -84,6 +87,13 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
     };
   };
 
+  const getVoteLink = (id: number) => { 
+    // FIXME: get the link with call encoding
+    const nonce = u8aToHex(decodeAddress(supersigAccount)).toString();
+    const link = '/extrinsic/0x2a026d6f646c69642f7375736967' + nonce.slice(26, 28) + '00000000000000000000000000000000000000' + id;
+    return link;
+  };
+
   return (
     <Accordion sx={sxs.accordion}>
       <AccordionSummary
@@ -95,7 +105,7 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
       </AccordionSummary>
       <AccordionDetails>
         {proposals.proposals_info.map(
-          ({ encoded_call, provider, voters }: ProposalDetails, index) => {
+          ({ encoded_call, provider, voters, id }: ProposalDetails, index) => {
             const extrinsicCall = api.createType(
               'Call',
               encoded_call.toString()
@@ -135,12 +145,12 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                       ))}
                     </AccordionDetails>
                   </Accordion>
-                  <Button
+                  <Link
                     sx={{ marginY: 2 }}
-                    variant='outlined'
+                    href={getVoteLink(id)}
                   >
                     Vote
-                  </Button>
+                  </Link>
                   <Accordion sx={sxs.accordion}>
                     <AccordionSummary
                       aria-controls='panel1a-content'

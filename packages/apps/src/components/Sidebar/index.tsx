@@ -66,7 +66,7 @@ export const Sidebar = () => {
             <ListItem
               className='sidebar-button'
               component={Link}
-              to='/organisations/create'
+              to='/extrinsic'
             >
               <ListItemIcon>
                 <FontAwesomeIcon icon={faPlus} style={{ marginRight: '5px' }} />
@@ -76,7 +76,7 @@ export const Sidebar = () => {
             <ListItem
               className='sidebar-button'
               component={Link}
-              to='/organisations/create'
+              to='/extrinsic'
             >
               <ListItemIcon>
                 <FontAwesomeIcon
@@ -93,7 +93,7 @@ export const Sidebar = () => {
                   : 'sidebar-button'
               }
               component={Link}
-              to='/organisations/decode'
+              to='/decode'
             >
               <ListItemIcon>
                 <FontAwesomeIcon icon={faCode} style={{ marginRight: '5px' }} />
