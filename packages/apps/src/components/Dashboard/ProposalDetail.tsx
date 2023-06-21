@@ -9,7 +9,7 @@ import React from 'react';
 
 import { useApi } from '@polkadot/react-hooks';
 import { CallExpander } from '@polkadot/react-params';
-import { u8aToHex } from '@polkadot/util';
+import { nToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
 
 import { formatBalance } from '../../utils/index.js';
@@ -89,11 +89,14 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, proposals
   };
 
   const getVoteLink = (id: number) => {
-    // FIXME: get the link with call encoding
     const nonce = u8aToHex(decodeAddress(supersigAccount)).toString();
-    const link = `/extrinsic/0x2a026d6f646c69642f7375736967${nonce.slice(26, 28)}00000000000000000000000000000000000000${id}`;
+    let call_id = u8aToHex(nToU8a(id), -1, false).toString();
 
-    return link;
+    for (let k = 0; k < (37 - call_id.length); k++) {
+      call_id += '0';
+    }
+
+    return `/extrinsic/0x2a026d6f646c69642f7375736967${nonce.slice(26, 28)}00000000000000000000000000000000000000${call_id}`;
   };
 
   return (

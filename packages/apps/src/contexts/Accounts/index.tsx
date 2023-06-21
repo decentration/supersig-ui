@@ -6,6 +6,7 @@ import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { useApi } from '@polkadot/react-hooks';
 
 interface AccountsContextProps {
   accounts: InjectedAccountWithMeta[];
@@ -21,6 +22,7 @@ const AccountsContext = createContext<AccountsContextProps>({
 });
 
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
+  useApi();
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 
   useEffect(() => {

@@ -83,21 +83,25 @@ const App = () => {
                       />
                       <Route
                         element={
-                          <Decoder
-                            defaultValue={decoded && decoded.hex}
-                            setLast={setDecoded}
-                          />
+                          <LoadingWrapper>
+                            <Decoder
+                              defaultValue={decoded && decoded.hex}
+                              setLast={setDecoded}
+                            />
+                          </LoadingWrapper>
                         }
                         path='/decode'
                       />
                       <Route
                         element={
-                          <Decoder
-                            defaultValue={decoded && decoded.hex}
-                            setLast={setDecoded}
-                          />
+                          <LoadingWrapper>
+                            <Decoder
+                              defaultValue={decoded && decoded.hex}
+                              setLast={setDecoded}
+                            />
+                          </LoadingWrapper>
                         }
-                        path='/decode/:decoded'
+                        path='/decode/:encoded'
                       />
                       <Route
                         element={<Accounts />}
