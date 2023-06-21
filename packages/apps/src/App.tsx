@@ -18,7 +18,7 @@ import { Accounts, Dashboard, Header, LoadingWrapper, Sidebar } from './componen
 import { AccountsProvider, ChainProvider, ToastProvider, useChain } from './contexts/index.js';
 import { darkTheme, lightTheme } from './themes.js';
 
-function createTheme ({ uiTheme }: { uiTheme: string }): ThemeDef {
+function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
   const validTheme = uiTheme === 'dark' ? 'dark' : 'light';
 
   document &&
@@ -30,7 +30,6 @@ function createTheme ({ uiTheme }: { uiTheme: string }): ThemeDef {
 
 const App = () => {
   const [theme] = useState(() => createTheme({ uiTheme: 'light' }));
-  const { activeRpc } = useChain();
   const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
 
   return (
@@ -38,7 +37,7 @@ const App = () => {
       <ToastProvider>
         <ChainProvider>
           <ApiCtxRoot
-            apiUrl={activeRpc}
+            apiUrl={'wss://soupcan1.jelliedowl.com'}
             isElectron={false}
           >
             <AccountsProvider>
