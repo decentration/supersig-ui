@@ -22,7 +22,7 @@ const ChainContext = createContext<ChainContextProps>({
   setActiveChain: () => {
     /** set selected chain */
   },
-  activeRpc: '',
+  activeRpc: 'wss://soupcan1.jelliedowl.com',
   setActiveRpc: () => {
     /** set selected rpc */
   },

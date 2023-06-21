@@ -11,6 +11,8 @@ import { useApi } from '../../contexts/Api/index.js';
 import { formatBalance } from '../../utils/index.js';
 import { CallExpander } from '@polkadot/react-params';
 import { ExpandMoreIcon } from '../Icon/index.js';
+import { useAccounts } from '../../contexts/Accounts/index.js';
+import { useNavigate } from 'react-router-dom';
 
 interface ProposalDetailInterface {
   proposals: ProposalInfo;
@@ -71,6 +73,8 @@ const Voter: FC<VoterInterface> = ({ balance, role, voter }) => {
 export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
   proposals }) => {
   const { api } = useApi();
+  const { setExtrinsic } = useAccounts();
+  const navigate = useNavigate();
 
   const getVoteInfo = (voter: Account) => {
     const member: MemberInfo = members.find(
@@ -138,6 +142,10 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members,
                   <Button
                     sx={{ marginY: 2 }}
                     variant='outlined'
+                    onClick={() => {
+                      setExtrinsic(extrinsicCall);
+                      navigate("/organisations/create");
+                    }}
                   >
                     Vote
                   </Button>
