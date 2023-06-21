@@ -226,3 +226,13 @@ h2 {
   color: rgb(21, 21, 21);
   margin-bottom: 0.75rem;
 }
+
+.ui.selection.dropdown,
+.ui.input {
+  min-width: 100%;
+}
+
+.ui.default.dropdown:not(.button)>.text,
+.ui.dropdown:not(.button)>.default.text {
+  color: black;
+}

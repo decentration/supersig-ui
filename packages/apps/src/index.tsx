@@ -6,10 +6,11 @@ import './initSettings.js';
 import 'semantic-ui-css/semantic.min.css';
 import '@polkadot/react-components/i18n';
 import '@polkadot/api-augment/substrate';
+import './index.css';
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+
 import App from './App.js';
 
 const rootId = 'root';

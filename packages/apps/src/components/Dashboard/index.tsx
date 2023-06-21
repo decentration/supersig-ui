@@ -1,15 +1,15 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Account, Balance, MemberInfo, MemberRole, ProposalInfo, SupersigInfo } from '../../types/index.js';
+import type { Account, Balance, MemberInfo, MemberRole, ProposalsInfo, SupersigInfo } from '../../types/index.js';
 
 import { Backdrop, Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
+import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { useApi } from '../../contexts/index.js';
 import { formatAccount, formatBalance, getFreeBalance, getReservedBalance } from '../../utils/index.js';
 import { BalanceDetail } from './BalanceDetail.js';
 import { ProposalDetail } from './ProposalDetail.js';
@@ -34,7 +34,7 @@ const sxs = {
 };
 
 export const Dashboard = () => {
-  const { api, decimals, isConnecting, ss58Format } = useApi();
+  const { api, chainSS58, isApiReady, tokenDecimals: decimals } = useApi();
   const [loading, setLoading] = useState(true);
   const [nonce, setNonce] = useState(0);
   const [supersigAccounts, setSupersigAccounts] = useState<string[]>([]);
@@ -51,59 +51,59 @@ export const Dashboard = () => {
   );
 
   useEffect(() => {
-    const loadNonce = async () => {
-      if (!api) {
-        return;
-      }
+    if (!api || !isApiReady) {
+      return;
+    }
 
+    const loadNonce = async () => {
       await api.query.supersig.nonceSupersig((_nonce: any) =>
         setNonce(Number(_nonce.toPrimitive()))
       );
     };
 
     loadNonce();
-  }, [api]);
-
-  const fetchSupersigInfo = async (account: Account): Promise<SupersigInfo> => {
-    const freeBalance = await getFreeBalance(api, account);
-    const reservedBalance = await getReservedBalance(api, account);
-    const balance = freeBalance.add(reservedBalance);
-
-    const memberAccounts: Array<Account> = (
-      await api.rpc.superSig.listMembers(account)
-    ).toPrimitive();
-
-    const members: Array<MemberInfo> = await Promise.all(
-      memberAccounts.map(async (member) => {
-        // here you get the list of members of a supersig
-        const account = member[0];
-        const role = Object.keys(member[1])[0] as MemberRole;
-        const free = await getFreeBalance(api, account);
-        const reserved = await getReservedBalance(api, account);
-
-        return {
-          account,
-          balance: free.add(reserved),
-          role
-        };
-      })
-    );
-
-    const proposals: ProposalInfo = (
-      await api.rpc.superSig.listProposals(account)
-    ).toPrimitive();
-
-    return {
-      account,
-      balance,
-      freeBalance,
-      members,
-      proposals,
-      reservedBalance
-    };
-  };
+  }, [api, isApiReady]);
 
   useEffect(() => {
+    const fetchSupersigInfo = async (account: Account): Promise<SupersigInfo> => {
+      const freeBalance = await getFreeBalance(api, account);
+      const reservedBalance = await getReservedBalance(api, account);
+      const balance = freeBalance.add(reservedBalance);
+
+      const memberAccounts: Array<Account> = (
+        await (api.rpc as any).superSig.listMembers(account)
+      ).toPrimitive();
+
+      const members: Array<MemberInfo> = await Promise.all(
+        memberAccounts.map(async (member) => {
+        // here you get the list of members of a supersig
+          const account = member[0];
+          const role = Object.keys(member[1])[0] as MemberRole;
+          const free = await getFreeBalance(api, account);
+          const reserved = await getReservedBalance(api, account);
+
+          return {
+            account,
+            balance: free.add(reserved),
+            role
+          };
+        })
+      );
+
+      const proposals: ProposalsInfo = (
+        await (api.rpc as any).superSig.listProposals(account)
+      ).toPrimitive();
+
+      return {
+        account,
+        balance,
+        freeBalance,
+        members,
+        proposals,
+        reservedBalance
+      };
+    };
+
     const init = async () => {
       setLoading(true);
 
@@ -124,7 +124,7 @@ export const Dashboard = () => {
   }, [api, supersigAccounts]);
 
   useEffect(() => {
-    if (!api) {
+    if (!api || !isApiReady) {
       return;
     }
 
@@ -150,13 +150,13 @@ export const Dashboard = () => {
       for await (const num of asyncGenerator()) {
         const supersigConcat =
           modl +
-          (palletId.slice(2, palletId.length) as string) +
+          (palletId.slice(2, palletId.length)) +
           twoDigit(num) +
           '00000000000000000000000000000000000000';
-        const account = encodeAddress(supersigConcat, ss58Format);
+        const account = encodeAddress(supersigConcat, chainSS58);
 
         try {
-          const data = await api.rpc.superSig.listMembers(account);
+          const data = await (api.rpc as any).superSig.listMembers(account);
           const members = data.toArray();
 
           if (members.length > 0) {
@@ -171,7 +171,7 @@ export const Dashboard = () => {
     };
 
     getSuperSigAddress();
-  }, [api, nonce]);
+  }, [api, isApiReady, nonce, chainSS58]);
 
   return (
     <>
@@ -213,9 +213,9 @@ export const Dashboard = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Active Proposals</TableCell>
-              <TableCell>Members (Balance)</TableCell>
+              <TableCell>Supersig Collectives</TableCell>
+              <TableCell>Live Proposals</TableCell>
+              <TableCell>Balances of (Members)</TableCell>
               <TableCell>Supersig Balance</TableCell>
             </TableRow>
           </TableHead>
@@ -224,10 +224,8 @@ export const Dashboard = () => {
               (
                 { account,
                   balance,
-                  freeBalance,
                   members,
-                  proposals,
-                  reservedBalance },
+                  proposals },
                 index
               ) => (
                 <TableRow
@@ -244,6 +242,7 @@ export const Dashboard = () => {
                     <ProposalDetail
                       members={members}
                       proposals={proposals}
+                      supersigAccount={account}
                     />
                   </TableCell>
                   <TableCell>
@@ -251,12 +250,6 @@ export const Dashboard = () => {
                   </TableCell>
                   <TableCell>
                     {formatBalance(balance, decimals)} UNIT
-                    <p>
-                      transferrable: {formatBalance(freeBalance, decimals)} UNIT
-                    </p>
-                    <p>
-                      reserved: {formatBalance(reservedBalance, decimals)} UNIT
-                    </p>
                   </TableCell>
                 </TableRow>
               )
@@ -265,7 +258,7 @@ export const Dashboard = () => {
         </Table>
       </Box>
       <Backdrop
-        open={isConnecting || loading}
+        open={!isApiReady || loading}
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <CircularProgress color='inherit' />

@@ -22,6 +22,7 @@ export interface ApiState {
   systemChain: string;
   systemName: string;
   systemVersion: string;
+  tokenDecimals: number;
 }
 
 export interface ApiProps extends ApiState {

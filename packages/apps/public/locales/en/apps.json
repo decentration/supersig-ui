@@ -1,5 +1,6 @@
 {
   "Accounts": "Accounts",
+  "Decode": "Decode",
   "Developer": "Developer",
   "Files": "Files",
   "Governance": "Governance",
@@ -7,6 +8,7 @@
   "Network": "Network",
   "Relay chain": "Relay chain",
   "Settings": "Settings",
+  "Submission": "Submission",
   "Switch": "Switch",
   "Waiting for authorization from the extension. Please open the installed extension and approve or reject access.": "Waiting for authorization from the extension. Please open the installed extension and approve or reject access.",
   "Waiting to complete metadata retrieval from remote endpoint.": "Waiting to complete metadata retrieval from remote endpoint.",

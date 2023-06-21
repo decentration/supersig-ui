@@ -1,26 +1,13 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  faCode,
-  faCog,
-  faFileAlt,
-  faPlus,
-  faUsers,
-  faWallet,
-} from '@fortawesome/free-solid-svg-icons';
+import './Sidebar.css';
+
+import { faCode, faCog, faFileAlt, faPlus, faUsers, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Collapse,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './Sidebar.css';
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -39,21 +26,32 @@ export const Sidebar = () => {
       <List>
         <ListItemButton onClick={handleClick}>
           <ListItemIcon>
-            <FontAwesomeIcon icon={faUsers} style={{ marginRight: '5px' }} />
+            <FontAwesomeIcon
+              icon={faUsers}
+              style={{ marginRight: '5px' }}
+            />
           </ListItemIcon>
           <ListItemText primary='Supersig' />
           {open ? '+' : '-'}
         </ListItemButton>
-        <Collapse in={open} timeout='auto' unmountOnExit>
-          <List component='div' disablePadding style={{ paddingLeft: '1.5em' }}>
+        <Collapse
+          in={open}
+          timeout='auto'
+          unmountOnExit
+        >
+          <List
+            component='div'
+            disablePadding
+            style={{ paddingLeft: '1.5em' }}
+          >
             <ListItem
               className={
-                isActive('/organisations/dashboard')
+                isActive('/dashboard')
                   ? 'active-link sidebar-button'
                   : 'sidebar-button'
               }
               component={Link}
-              to='/organisations/dashboard'
+              to='/dashboard'
             >
               <ListItemIcon>
                 <FontAwesomeIcon
@@ -66,17 +64,20 @@ export const Sidebar = () => {
             <ListItem
               className='sidebar-button'
               component={Link}
-              to='/organisations/create'
+              to='/extrinsic'
             >
               <ListItemIcon>
-                <FontAwesomeIcon icon={faPlus} style={{ marginRight: '5px' }} />
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  style={{ marginRight: '5px' }}
+                />
               </ListItemIcon>
               <ListItemText primary='Create' />
             </ListItem>
             <ListItem
               className='sidebar-button'
               component={Link}
-              to='/organisations/create'
+              to='/extrinsic'
             >
               <ListItemIcon>
                 <FontAwesomeIcon
@@ -88,21 +89,23 @@ export const Sidebar = () => {
             </ListItem>
             <ListItem
               className={
-                isActive('/organisations/decode')
+                isActive('/decode')
                   ? 'active-link sidebar-button'
                   : 'sidebar-button'
               }
               component={Link}
-              to='/organisations/decode'
+              to='/decode'
             >
               <ListItemIcon>
-                <FontAwesomeIcon icon={faCode} style={{ marginRight: '5px' }} />
+                <FontAwesomeIcon
+                  icon={faCode}
+                  style={{ marginRight: '5px' }}
+                />
               </ListItemIcon>
               <ListItemText primary='Decode' />
             </ListItem>
           </List>
         </Collapse>
-
         <ListItem
           className={
             isActive('/wallet/accounts')
@@ -113,11 +116,13 @@ export const Sidebar = () => {
           to='/wallet/accounts'
         >
           <ListItemIcon>
-            <FontAwesomeIcon icon={faWallet} style={{ marginRight: '5px' }} />
+            <FontAwesomeIcon
+              icon={faWallet}
+              style={{ marginRight: '5px' }}
+            />
           </ListItemIcon>
           <ListItemText primary='Accounts' />
         </ListItem>
-
         <ListItem
           className={
             isActive('/settings')
@@ -128,7 +133,10 @@ export const Sidebar = () => {
           to='/settings'
         >
           <ListItemIcon>
-            <FontAwesomeIcon icon={faCog} style={{ marginRight: '5px' }} />
+            <FontAwesomeIcon
+              icon={faCog}
+              style={{ marginRight: '5px' }}
+            />
           </ListItemIcon>
           <ListItemText primary='Settings' />
         </ListItem>

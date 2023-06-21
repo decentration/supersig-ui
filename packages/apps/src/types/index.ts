@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { OverrideBundleDefinition } from '@polkadot/types/types';
-import { BN } from '@polkadot/util';
+import type { BN } from '@polkadot/util';
 
 export interface Chain {
   // rpc(rpc: any): unknown;
@@ -23,7 +23,7 @@ export type ProposalDetails = {
   voters: Array<Account>;
 }
 
-export type ProposalInfo = {
+export type ProposalsInfo = {
   proposals_info: Array<ProposalDetails>;
   no_of_members: number;
 };
@@ -38,7 +38,7 @@ export type MemberInfo = {
 
 export type SupersigInfo = {
   account: Account;
-  proposals: ProposalInfo;
+  proposals: ProposalsInfo;
   members: Array<MemberInfo>;
   balance: Balance;
   freeBalance: Balance;

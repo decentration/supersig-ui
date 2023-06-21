@@ -7,21 +7,24 @@ import type { Balance, MemberInfo } from '../../types/index.js';
 import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material';
 import React from 'react';
 
+import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useApi } from '../../contexts/index.js';
 import { formatAccount, formatBalance } from '../../utils/index.js';
+import { ExpandMoreIcon } from '../Icon/index.js';
+
 interface BalanceDetailInterface {
   members: Array<MemberInfo>;
 }
 
 export const BalanceDetail: FC<BalanceDetailInterface> = ({ members = [] }) => {
-  const { decimals } = useApi();
+  const { tokenDecimals: decimals } = useApi();
 
   return (
     <Accordion sx={{ boxShadow: 'none' }}>
       <AccordionSummary
         aria-controls='panel1a-content'
+        expandIcon={ExpandMoreIcon}
         id='panel1a-header'
       >
         {formatBalance(

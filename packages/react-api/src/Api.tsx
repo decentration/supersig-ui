@@ -194,7 +194,8 @@ async function loadOnReady (api: ApiPromise, endpoint: LinkOption | null, inject
     specVersion: api.runtimeVersion.specVersion.toString(),
     systemChain,
     systemName,
-    systemVersion
+    systemVersion,
+    tokenDecimals: tokenDecimals.map((b) => b.toNumber())[0]
   };
 }
 

@@ -19,6 +19,7 @@ export interface ApiState {
   apiDefaultTx: SubmittableExtrinsicFunction;
   apiDefaultTxSudo: SubmittableExtrinsicFunction;
   chainSS58: number;
+  tokenDecimals: number;
   hasInjectedAccounts: boolean;
   isApiReady: boolean;
   isDevelopment: boolean;
