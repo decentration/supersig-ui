@@ -101,7 +101,6 @@ export const generateSupersigAccounts = (count: number, palletId: string, chainS
     accounts.push({
       address,
       meta: {
-        genesisHash: '',
         name: `Supersig account ${num}`,
         source: 'Supersig'
       },
