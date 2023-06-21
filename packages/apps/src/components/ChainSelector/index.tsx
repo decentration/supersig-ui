@@ -8,6 +8,8 @@ import type { Chain } from '../../types/index.js';
 import { Radio } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { settings } from '@polkadot/ui-settings';
+
 import { chains } from '../../config/chains/index.js';
 import { useChain } from '../../contexts/index.js';
 
@@ -81,6 +83,8 @@ export const ChainSelector = () => {
               setOpen(false);
               setSelectedRpc(rpc);
               setSelectedChain(chain);
+              settings.set({ ...(settings.get()), apiUrl: rpc });
+              window.location.assign(`${window.location.origin}${window.location.pathname}?rpc=${encodeURIComponent(rpc)}${window.location.hash}`);
             }}
           >
             Select {chain.name}

@@ -7,7 +7,7 @@ import type { Call } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 import type { DecodedExtrinsic } from './types.js';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Input, InputExtrinsic, MarkError } from '@polkadot/react-components';
@@ -46,7 +46,7 @@ const DEFAULT_INFO: ExtrinsicInfo = {
 function Decoder({ className, defaultValue, setLast }: Props): React.ReactElement<Props> {
   const { encoded } = useParams<{ encoded: string }>();
   const [initialValue] = useState(() => defaultValue || encoded);
-  const { api, isApiReady } = useApi();
+  const { api } = useApi();
 
   const [{ decoded, extrinsicCall, extrinsicError, extrinsicFn, extrinsicKey, isCall }, setExtrinsicInfo] = useState<ExtrinsicInfo>(DEFAULT_INFO);
 

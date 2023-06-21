@@ -7,11 +7,12 @@ import type { ThemeDef } from '@polkadot/react-components/types';
 import type { DecodedExtrinsic } from './components/Extrinsics/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { ApiCtxRoot } from '@polkadot/react-api';
+import { settings } from '@polkadot/ui-settings';
 
 import Decoder from './components/Extrinsics/Decoder.js';
 import Submission from './components/Extrinsics/Submission.js';
@@ -19,7 +20,7 @@ import { Accounts, Dashboard, Header, LoadingWrapper, Sidebar } from './componen
 import { AccountsProvider, ChainProvider, ToastProvider, useChain } from './contexts/index.js';
 import { darkTheme, lightTheme } from './themes.js';
 
-function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
+function createTheme ({ uiTheme }: { uiTheme: string }): ThemeDef {
   const validTheme = uiTheme === 'dark' ? 'dark' : 'light';
 
   document &&
@@ -30,11 +31,17 @@ function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
 }
 
 const App = () => {
-  const [theme] = useState(() => createTheme({ uiTheme: 'light' }));
+  const [theme, setTheme] = useState(() => createTheme(settings));
+  const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
+
+  useEffect((): void => {
+    settings.on('change', (settings) => {
+      setTheme(createTheme(settings));
+    });
+  }, []);
 
   const Main = () => {
     const { activeRpc } = useChain();
-    const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
 
     return (
       <ApiCtxRoot
