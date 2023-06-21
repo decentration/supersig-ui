@@ -5,7 +5,6 @@ import type { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { ChainProperties, ChainType } from '@polkadot/types/interfaces';
 import type { KeyringStore } from '@polkadot/ui-keyring/types';
-import type { Chain } from '../../apps/src/types/index.js';
 import type { ApiProps, ApiState } from './types.js';
 
 import * as Sc from '@substrate/connect';
@@ -230,7 +229,7 @@ async function getLightProvider (chain: string): Promise<ScProvider> {
 /**
  * @internal
  */
-async function createApi (activeChain: Chain, apiUrl: string, signer: ApiSigner, onError: (error: unknown) => void): Promise<Record<string, Record<string, string>>> {
+async function createApi (apiUrl: string, signer: ApiSigner, onError: (error: unknown) => void): Promise<Record<string, Record<string, string>>> {
   const types = getDevTypes();
   const isLight = apiUrl.startsWith('light://');
 
@@ -242,9 +241,8 @@ async function createApi (activeChain: Chain, apiUrl: string, signer: ApiSigner,
     statics.api = new ApiPromise({
       provider,
       registry: statics.registry,
-      rpc: activeChain.definitions.rpc,
       signer,
-      types: activeChain.definitions.types![0].types,
+      types,
       typesBundle
     });
 
@@ -292,7 +290,7 @@ export function ApiCtxRoot ({ apiUrl, children, isElectron, store }: Props): Rea
       setApiError((error as Error).message);
     };
 
-    createApi(activeChain, apiUrl, new ApiSigner(statics.registry, queuePayload, queueSetTxStatus), onError)
+    createApi(apiUrl, new ApiSigner(statics.registry, queuePayload, queueSetTxStatus), onError)
       .then((types): void => {
         statics.api.on('connected', () => setIsApiConnected(true));
         statics.api.on('disconnected', () => setIsApiConnected(false));

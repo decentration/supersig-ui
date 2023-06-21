@@ -1,7 +1,7 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Account, Balance, MemberInfo, MemberRole, ProposalInfo, SupersigInfo } from '../../types/index.js';
+import type { Account, Balance, MemberInfo, MemberRole, ProposalsInfo, SupersigInfo } from '../../types/index.js';
 
 import { Backdrop, Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -90,7 +90,7 @@ export const Dashboard = () => {
         })
       );
 
-      const proposals: ProposalInfo = (
+      const proposals: ProposalsInfo = (
         await (api.rpc as any).superSig.listProposals(account)
       ).toPrimitive();
 

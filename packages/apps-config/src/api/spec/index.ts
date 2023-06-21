@@ -64,6 +64,7 @@ import ipse from './ipse.js';
 import jupiter from './jupiter.js';
 import jupiterRococo from './jupiter-rococo.js';
 import jur from './jur.js';
+import kabocha from './kabocha.js';
 import khala from './khala.js';
 import konomi from './konomi.js';
 import kpron from './kpron.js';
@@ -218,6 +219,7 @@ const spec: Record<string, OverrideBundleDefinition> = {
   'jupiter-rococo': jupiterRococo,
   'jur-chain': jur,
   'jur-node': jur,
+  'kabocha-parachain': kabocha,
   kerria: parallel,
   khala,
   'kintsugi-parachain': interbtc,

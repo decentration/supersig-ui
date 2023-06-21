@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FC } from 'react';
-import type { Account, Balance, MemberInfo, MemberRole, ProposalDetails, ProposalInfo } from '../../types/index.js';
+import type { Account, Balance, MemberInfo, MemberRole, ProposalDetails, ProposalsInfo } from '../../types/index.js';
 
 import { Accordion, AccordionDetails, AccordionSummary, Box, Link } from '@mui/material';
 import React from 'react';
@@ -17,7 +17,7 @@ import { ExpandMoreIcon } from '../Icon/index.js';
 
 interface ProposalDetailInterface {
   supersigAccount: Account;
-  proposals: ProposalInfo;
+  proposals: ProposalsInfo;
   members: Array<MemberInfo>;
 }
 
