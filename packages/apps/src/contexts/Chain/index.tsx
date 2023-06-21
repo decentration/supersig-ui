@@ -5,7 +5,9 @@ import type { Chain } from '../../types/index.js';
 
 import React, { createContext, type ReactNode, useContext, useState } from 'react';
 
-import { defaultChain } from '../../config/chains/index.js';
+import { settings } from '@polkadot/ui-settings';
+
+import { chains, defaultChain, isSupportedRpc } from '../../config/chains/index.js';
 
 interface ChainContextProps {
   activeChain: Chain;
@@ -29,11 +31,21 @@ const ChainContext = createContext<ChainContextProps>({
   }
 });
 
+const checkUrl = (): string => {
+  const url = settings.apiUrl;
+
+  if (isSupportedRpc(url)) {
+    return url;
+  } else {
+    return defaultChain.rpcEndpoints[0];
+  }
+};
+
 const ChainProvider = ({ children }: ChainProviderProps) => {
-  const [activeChain, setActiveChain] = useState<Chain>(defaultChain);
-  const [activeRpc, setActiveRpc] = useState<string>(
-    defaultChain.rpcEndpoints[0]
-  );
+  const url = checkUrl();
+  const chain = chains.find((chain) => chain.rpcEndpoints.includes(url));
+  const [activeChain, setActiveChain] = useState<Chain>(chain!);
+  const [activeRpc, setActiveRpc] = useState<string>(url);
 
   return (
     <ChainContext.Provider

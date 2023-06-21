@@ -39,4 +39,8 @@ export const chains: Chain[] = [
   // Add more chains if needed
 ];
 
+export const isSupportedRpc = (apiUrl: string): boolean => {
+  return chains.reduce((result, chain) => result || chain.rpcEndpoints.includes(apiUrl), false);
+};
+
 export const defaultChain = chains[0];
