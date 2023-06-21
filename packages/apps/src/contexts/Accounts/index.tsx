@@ -3,7 +3,7 @@
 
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import React, { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { useApi } from '@polkadot/react-hooks';
@@ -28,7 +28,7 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
   const { api, chainSS58, isApiReady } = useApi();
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 
-  useCallback(() => {
+  useEffect(() => {
     if (!api || !isApiReady) {
       return;
     }
