@@ -1,9 +1,11 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import type { Account, Balance } from '../types/index.js';
 
 import { BN } from '@polkadot/util';
+import { encodeAddress } from '@polkadot/util-crypto';
 
 export const getFreeBalance = async (
   api: any,
@@ -76,4 +78,36 @@ export const formatBalance = (balance: BN, units: number): string => {
 
 export const formatAccount = (account: Account): string => {
   return `${account.substring(0, 10)}...`;
+};
+
+export const generateSupersigAccounts = (count: number, palletId: string, chainSS58: number): InjectedAccountWithMeta[] => {
+  const twoDigit = (number: number): string => {
+    const twodigit = number >= 10 ? number : '0' + number.toString();
+
+    return twodigit.toString();
+  };
+
+  const modl = '0x6d6f646c';
+  const accounts: InjectedAccountWithMeta[] = [];
+
+  for (let num = 0; num < count; ++num) {
+    const supersigConcat =
+      modl +
+      (palletId.slice(2, palletId.length)) +
+      twoDigit(num) +
+      '00000000000000000000000000000000000000';
+    const address = encodeAddress(supersigConcat, chainSS58);
+
+    accounts.push({
+      address,
+      meta: {
+        genesisHash: '',
+        name: `Supersig account ${num}`,
+        source: 'Supersig'
+      },
+      type: 'sr25519'
+    } as InjectedAccountWithMeta);
+  }
+
+  return accounts;
 };

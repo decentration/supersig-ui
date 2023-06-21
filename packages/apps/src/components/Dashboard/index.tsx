@@ -9,9 +9,8 @@ import React, { useEffect, useState } from 'react';
 import { AddressSmall } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
 
-import { formatBalance, getFreeBalance, getReservedBalance } from '../../utils/index.js';
+import { formatBalance, generateSupersigAccounts, getFreeBalance, getReservedBalance } from '../../utils/index.js';
 import { BalanceDetail } from './BalanceDetail.js';
 import { ProposalDetail } from './ProposalDetail.js';
 import { Summary } from './Summary.js';
@@ -130,38 +129,18 @@ export const Dashboard = () => {
     }
 
     const getSuperSigAddress = async () => {
-      const modl = '0x6d6f646c';
-      const palletId = api.consts.supersig.palletId.toString();
       const addressArray: string[] = [];
+      const palletId = api.consts.supersig.palletId.toString();
 
-      function * asyncGenerator () {
-        let i = 0;
+      const accounts = generateSupersigAccounts(nonce, palletId, chainSS58);
 
-        while (i < nonce) {
-          yield i++;
-        }
-      }
-
-      const twoDigit = (number: number): string => {
-        const twodigit = number >= 10 ? number : '0' + number.toString();
-
-        return twodigit.toString();
-      };
-
-      for await (const num of asyncGenerator()) {
-        const supersigConcat =
-          modl +
-          (palletId.slice(2, palletId.length)) +
-          twoDigit(num) +
-          '00000000000000000000000000000000000000';
-        const account = encodeAddress(supersigConcat, chainSS58);
-
+      for await (const account of accounts) {
         try {
-          const data = await (api.rpc as any).superSig.listMembers(account);
+          const data = await (api.rpc as any).superSig.listMembers(account.address);
           const members = data.toArray();
 
           if (members.length > 0) {
-            addressArray.push(account.toString());
+            addressArray.push(account.address);
           }
         } catch (_err) {
           /** An error occured */
