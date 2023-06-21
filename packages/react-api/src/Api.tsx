@@ -24,7 +24,6 @@ import { settings } from '@polkadot/ui-settings';
 import { formatBalance, isNumber, isTestChain, objectSpread, stringify } from '@polkadot/util';
 import { defaults as addressDefaults } from '@polkadot/util-crypto/address/defaults';
 
-import { useChain } from '../../apps/src/contexts/Chain/index.js';
 import { lightSpecs, relaySpecs } from './light/index.js';
 import { statics } from './statics.js';
 import { decodeUrlTypes } from './urlTypes.js';
@@ -258,7 +257,6 @@ async function createApi (apiUrl: string, signer: ApiSigner, onError: (error: un
 }
 
 export function ApiCtxRoot ({ apiUrl, children, isElectron, store }: Props): React.ReactElement<Props> | null {
-  const { activeChain } = useChain();
   const { queuePayload, queueSetTxStatus } = useQueue();
   const [state, setState] = useState<ApiState>(EMPTY_STATE);
   const [isApiConnected, setIsApiConnected] = useState(false);
@@ -310,7 +308,7 @@ export function ApiCtxRoot ({ apiUrl, children, isElectron, store }: Props): Rea
         setIsApiInitialized(true);
       })
       .catch(onError);
-  }, [activeChain, apiEndpoint, apiUrl, queuePayload, queueSetTxStatus, store]);
+  }, [apiEndpoint, apiUrl, queuePayload, queueSetTxStatus, store]);
 
   if (!value.isApiInitialized) {
     return null;
