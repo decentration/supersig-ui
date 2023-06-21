@@ -9,14 +9,10 @@ import {
   useContext,
   useEffect,
   useState,
-  Dispatch,
-  SetStateAction,
 } from 'react';
 
 interface AccountsContextProps {
   accounts: InjectedAccountWithMeta[];
-  extrinsicCall: any,
-  setExtrinsic: Dispatch<SetStateAction<any>>
 }
 
 interface AccountsProviderProps {
@@ -26,13 +22,10 @@ interface AccountsProviderProps {
 // Create the context with default values
 const AccountsContext = createContext<AccountsContextProps>({
   accounts: [],
-  extrinsicCall: null,
-  setExtrinsic: () => { }
 });
 
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-  const [extrinsicCall, setExtrinsic] = useState(null);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -51,7 +44,7 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
   }, []);
 
   return (
-    <AccountsContext.Provider value={{ accounts, extrinsicCall, setExtrinsic }}>
+    <AccountsContext.Provider value={{ accounts }}>
       {children}
     </AccountsContext.Provider>
   );

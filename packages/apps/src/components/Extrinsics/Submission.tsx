@@ -9,9 +9,9 @@ import React, { useCallback, useState } from 'react';
 
 import { Button, InputAddress, MarkError, TxButton } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
-import { useAccounts } from "../../contexts/Accounts/index.js"
 import { Extrinsic } from '@polkadot/react-params';
 import { BalanceFree } from '@polkadot/react-query';
+
 import Decoded from './Decoded.js';
 
 interface Props {
@@ -40,9 +40,9 @@ function extractDefaults(value: DecodedExtrinsic | null, defaultFn: SubmittableE
 
 function Selection({ className, defaultValue }: Props): React.ReactElement<Props> {
     const { apiDefaultTxSudo } = useApi();
-    const { extrinsicCall, setExtrinsic } = useAccounts();
     const [accountId, setAccountId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | null>(null);
     const [{ defaultArgs, defaultFn }] = useState<DefaultExtrinsic>(() => extractDefaults(defaultValue, apiDefaultTxSudo));
 
     const _onExtrinsicChange = useCallback(
@@ -78,15 +78,15 @@ function Selection({ className, defaultValue }: Props): React.ReactElement<Props
                 onError={_onExtrinsicError}
             />
             <Decoded
-                extrinsic={extrinsicCall}
+                extrinsic={extrinsic}
                 isCall
             />
-            {error && !extrinsicCall && (
+            {error && !extrinsic && (
                 <MarkError content={error} />
             )}
             <Button.Group>
                 <TxButton
-                    extrinsic={extrinsicCall}
+                    extrinsic={extrinsic}
                     icon='sign-in-alt'
                     isUnsigned
                     label='Submit Unsigned'
@@ -94,7 +94,7 @@ function Selection({ className, defaultValue }: Props): React.ReactElement<Props
                 />
                 <TxButton
                     accountId={accountId}
-                    extrinsic={extrinsicCall}
+                    extrinsic={extrinsic}
                     icon='sign-in-alt'
                     label='Submit Transaction'
                 />
