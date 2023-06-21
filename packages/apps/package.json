@@ -3,7 +3,7 @@
   "engines": {
     "node": ">=16"
   },
-  "homepage": "https://github.com/cuteolaf/supersig-apps/tree/master/packages/apps#readme",
+  "homepage": ".",
   "license": "Apache-2.0",
   "name": "@polkadot/apps",
   "private": true,
