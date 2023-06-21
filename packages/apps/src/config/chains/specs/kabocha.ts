@@ -1,7 +1,7 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { OverrideBundleDefinition } from "@polkadot/types/types";
+import type { OverrideBundleDefinition } from '@polkadot/types/types';
 
 const definitions: OverrideBundleDefinition = {
   rpc: {
@@ -11,46 +11,46 @@ const definitions: OverrideBundleDefinition = {
         params: [
           {
             name: 'supersig_id',
-            type: 'AccountId',
+            type: 'AccountId'
           },
           {
             name: 'call_id',
-            type: 'CallId',
-          },
+            type: 'CallId'
+          }
         ],
-        type: 'FetchProposalState',
+        type: 'FetchProposalState'
       },
       getUserSupersigs: {
         description: 'Get supersigs associated to the user.',
         params: [
           {
             name: 'user_account',
-            type: 'AccountId',
-          },
+            type: 'AccountId'
+          }
         ],
-        type: 'Vec<SupersigId>',
+        type: 'Vec<SupersigId>'
       },
       listMembers: {
         description: 'List members of the supersig',
         params: [
           {
             name: 'supersig_id',
-            type: 'AccountId',
-          },
+            type: 'AccountId'
+          }
         ],
-        type: 'Vec<(AccountId, Role)>',
+        type: 'Vec<(AccountId, Role)>'
       },
       listProposals: {
         description: 'List proposals associated to a supersig',
         params: [
           {
             name: 'supersig_id',
-            type: 'AccountId',
-          },
+            type: 'AccountId'
+          }
         ],
-        type: 'FetchListProposals',
-      },
-    },
+        type: 'FetchListProposals'
+      }
+    }
   },
   types: [
     {
@@ -58,31 +58,31 @@ const definitions: OverrideBundleDefinition = {
       types: {
         CallId: 'u32',
         FetchListProposals: {
-          proposals_info: 'ProposalStates',
           no_of_members: 'u32',
+          proposals_info: 'ProposalStates'
         },
         FetchProposalState: {
-          proposal_info: 'ProposalState<AccountId>',
           no_of_members: 'u32',
+          proposal_info: 'ProposalState<AccountId>'
         },
         ProposalState: {
           encoded_call: 'Vec<u8>',
           id: 'CallId',
           provider: 'AccountId',
-          voters: 'Vec<AccountId>',
+          voters: 'Vec<AccountId>'
         },
         ProposalStates: 'Vec<ProposalState<AccountId>>',
         Role: {
           _enum: {
             Master: 'Vec<u8>',
             NotMember: 'Vec<u8>',
-            Standard: 'Vec<u8>',
-          },
+            Standard: 'Vec<u8>'
+          }
         },
-        SupersigId: 'u132',
-      },
-    },
-  ],
+        SupersigId: 'u132'
+      }
+    }
+  ]
 };
 
 export default definitions;

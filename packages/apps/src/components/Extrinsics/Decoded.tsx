@@ -12,90 +12,90 @@ import { Columar, Inspect as DecodedInspect, Output, styled } from '@polkadot/re
 import { u8aToHex } from '@polkadot/util';
 
 interface Props {
-    className?: string;
-    extrinsic?: SubmittableExtrinsic<'promise'> | null;
-    isCall: boolean;
-    payload?: ExtrinsicPayload | null;
-    withData?: boolean;
-    withHash?: boolean;
+  className?: string;
+  extrinsic?: SubmittableExtrinsic<'promise'> | null;
+  isCall: boolean;
+  payload?: ExtrinsicPayload | null;
+  withData?: boolean;
+  withHash?: boolean;
 }
 
-function extract(isCall: boolean, extrinsic?: SubmittableExtrinsic<'promise'> | null, payload?: ExtrinsicPayload | null): [HexString, HexString, Inspect | null] {
-    if (!extrinsic) {
-        return ['0x', '0x', null];
-    }
+function extract (isCall: boolean, extrinsic?: SubmittableExtrinsic<'promise'> | null, payload?: ExtrinsicPayload | null): [HexString, HexString, Inspect | null] {
+  if (!extrinsic) {
+    return ['0x', '0x', null];
+  }
 
-    const u8a = extrinsic.method.toU8a();
-    let inspect = isCall
-        ? extrinsic.method.inspect()
-        : extrinsic.inspect();
+  const u8a = extrinsic.method.toU8a();
+  let inspect = isCall
+    ? extrinsic.method.inspect()
+    : extrinsic.inspect();
 
-    if (payload) {
-        const prev = inspect;
+  if (payload) {
+    const prev = inspect;
 
-        inspect = payload.inspect();
-        inspect.inner?.map((entry, index) => {
-            if (index === 0) {
-                // replace the method inner
-                entry.inner = prev.inner;
-                entry.outer = undefined;
-            }
+    inspect = payload.inspect();
+    inspect.inner?.map((entry, index) => {
+      if (index === 0) {
+        // replace the method inner
+        entry.inner = prev.inner;
+        entry.outer = undefined;
+      }
 
-            return entry;
-        });
-    }
+      return entry;
+    });
+  }
 
-    // don't use the built-in hash, we only want to convert once
-    return [
-        u8aToHex(u8a),
-        extrinsic.registry.hash(u8a).toHex(),
-        inspect
-    ];
+  // don't use the built-in hash, we only want to convert once
+  return [
+    u8aToHex(u8a),
+    extrinsic.registry.hash(u8a).toHex(),
+    inspect
+  ];
 }
 
-function Decoded({ className, extrinsic, isCall, payload, withData = true, withHash = true }: Props): React.ReactElement<Props> | null {
-    const [hex, hash, inspect] = useMemo(
-        () => extract(isCall, extrinsic, payload),
-        [extrinsic, isCall, payload]
-    );
+function Decoded ({ className, extrinsic, isCall, payload, withData = true, withHash = true }: Props): React.ReactElement<Props> | null {
+  const [hex, hash, inspect] = useMemo(
+    () => extract(isCall, extrinsic, payload),
+    [extrinsic, isCall, payload]
+  );
 
-    if (!inspect) {
-        return null;
-    }
+  if (!inspect) {
+    return null;
+  }
 
-    return (
-        <StyledColumar
-            className={className}
-            isPadded={false}
-        >
-            <Columar.Column>
-                {withData && (
-                    <Output
-                        isDisabled
-                        isTrimmed
-                        label='encoded call data'
-                        value={hex}
-                        withCopy
-                    />
-                )}
-                {withHash && (
-                    <Output
-                        isDisabled
-                        label='encoded call hash'
-                        value={hash}
-                        withCopy
-                    />
-                )}
-            </Columar.Column>
-            <Columar.Column>
-                <DecodedInspect
-                    hex={hex}
-                    inspect={inspect}
-                    label='encoding details'
-                />
-            </Columar.Column>
-        </StyledColumar>
-    );
+  return (
+    <StyledColumar
+      className={className}
+      isPadded={false}
+    >
+      <Columar.Column>
+        {withData && (
+          <Output
+            isDisabled
+            isTrimmed
+            label='encoded call data'
+            value={hex}
+            withCopy
+          />
+        )}
+        {withHash && (
+          <Output
+            isDisabled
+            label='encoded call hash'
+            value={hash}
+            withCopy
+          />
+        )}
+      </Columar.Column>
+      <Columar.Column>
+        <DecodedInspect
+          hex={hex}
+          inspect={inspect}
+          label='encoding details'
+        />
+      </Columar.Column>
+    </StyledColumar>
+  );
 }
 
 const StyledColumar = styled(Columar)`

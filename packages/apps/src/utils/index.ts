@@ -1,16 +1,17 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BN } from '@polkadot/util';
-
 import type { Account, Balance } from '../types/index.js';
+
+import { BN } from '@polkadot/util';
 
 export const getFreeBalance = async (
   api: any,
   address: string
 ): Promise<Balance> => {
   const balance = await api.derive.balances.account(address);
-  return balance.freeBalance;
+
+  return balance.freeBalance as Balance;
 };
 
 export const getReservedBalance = async (
@@ -18,7 +19,8 @@ export const getReservedBalance = async (
   address: string
 ): Promise<Balance> => {
   const balance = await api.derive.balances.account(address);
-  return balance.reservedBalance;
+
+  return balance.reservedBalance as Balance;
 };
 
 /**
@@ -42,25 +44,33 @@ export const planckBnToUnit = (val: BN, units: number): number => {
   // The decimal fraction portion in string.
   // it is padded by '0's to achieve `units` number of decimal points.
   const decimal = mod.toString().padStart(units, '0');
+
   // the final number in string
   return Number(`${whole}.${decimal.substring(0, 5) || '0'}`);
 };
 
 export const humanNumber = (val: number): string => {
   const str = val.toString().split('.');
+
   str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
   return str.join('.');
 };
 
 export const humanNumberBn = (valBn: BN, units: number): string => {
   const val = planckBnToUnit(valBn, units);
+
   return humanNumber(val);
 };
 
 export const formatBalance = (balance: BN, units: number): string => {
   const value = humanNumberBn(balance, units);
   const dot = value.indexOf('.');
-  if (dot === -1) return value + '.0000';
+
+  if (dot === -1) {
+    return value + '.0000';
+  }
+
   return (value + '00000').substring(0, dot + 5);
 };
 

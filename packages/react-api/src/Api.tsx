@@ -5,6 +5,7 @@ import type { LinkOption } from '@polkadot/apps-config/endpoints/types';
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { ChainProperties, ChainType } from '@polkadot/types/interfaces';
 import type { KeyringStore } from '@polkadot/ui-keyring/types';
+import type { Chain } from '../../apps/src/types/index.js';
 import type { ApiProps, ApiState } from './types.js';
 
 import * as Sc from '@substrate/connect';
@@ -24,6 +25,7 @@ import { settings } from '@polkadot/ui-settings';
 import { formatBalance, isNumber, isTestChain, objectSpread, stringify } from '@polkadot/util';
 import { defaults as addressDefaults } from '@polkadot/util-crypto/address/defaults';
 
+import { useChain } from '../../apps/src/contexts/Chain/index.js';
 import { lightSpecs, relaySpecs } from './light/index.js';
 import { statics } from './statics.js';
 import { decodeUrlTypes } from './urlTypes.js';
@@ -60,7 +62,7 @@ export const DEFAULT_AUX = ['Aux1', 'Aux2', 'Aux3', 'Aux4', 'Aux5', 'Aux6', 'Aux
 const DISALLOW_EXTENSIONS: string[] = [];
 const EMPTY_STATE = { hasInjectedAccounts: false, isApiReady: false } as unknown as ApiState;
 
-function isKeyringLoaded() {
+function isKeyringLoaded () {
   try {
     return !!keyring.keyring;
   } catch {
@@ -68,7 +70,7 @@ function isKeyringLoaded() {
   }
 }
 
-function getDevTypes(): Record<string, Record<string, string>> {
+function getDevTypes (): Record<string, Record<string, string>> {
   const types = decodeUrlTypes() || store.get('types', {}) as Record<string, Record<string, string>>;
   const names = Object.keys(types);
 
@@ -77,7 +79,7 @@ function getDevTypes(): Record<string, Record<string, string>> {
   return types;
 }
 
-async function getInjectedAccounts(injectedPromise: Promise<InjectedExtension[]>): Promise<InjectedAccountExt[]> {
+async function getInjectedAccounts (injectedPromise: Promise<InjectedExtension[]>): Promise<InjectedAccountExt[]> {
   try {
     await injectedPromise;
 
@@ -97,7 +99,7 @@ async function getInjectedAccounts(injectedPromise: Promise<InjectedExtension[]>
   }
 }
 
-function makeCreateLink(baseApiUrl: string, isElectron: boolean): (path: string) => string {
+function makeCreateLink (baseApiUrl: string, isElectron: boolean): (path: string) => string {
   return (path: string, apiUrl?: string): string =>
     `${isElectron
       ? 'https://polkadot.js.org/apps/'
@@ -105,7 +107,7 @@ function makeCreateLink(baseApiUrl: string, isElectron: boolean): (path: string)
     }?rpc=${encodeURIComponent(apiUrl || baseApiUrl)}#${path}`;
 }
 
-async function retrieve(api: ApiPromise, injectedPromise: Promise<InjectedExtension[]>): Promise<ChainData> {
+async function retrieve (api: ApiPromise, injectedPromise: Promise<InjectedExtension[]>): Promise<ChainData> {
   const [systemChain, systemChainType, systemName, systemVersion, injectedAccounts] = await Promise.all([
     api.rpc.system.chain(),
     api.rpc.system.chainType
@@ -132,7 +134,7 @@ async function retrieve(api: ApiPromise, injectedPromise: Promise<InjectedExtens
   };
 }
 
-async function loadOnReady(api: ApiPromise, endpoint: LinkOption | null, injectedPromise: Promise<InjectedExtension[]>, store: KeyringStore | undefined, types: Record<string, Record<string, string>>): Promise<ApiState> {
+async function loadOnReady (api: ApiPromise, endpoint: LinkOption | null, injectedPromise: Promise<InjectedExtension[]>, store: KeyringStore | undefined, types: Record<string, Record<string, string>>): Promise<ApiState> {
   statics.registry.register(types);
 
   const { injectedAccounts, properties, systemChain, systemChainType, systemName, systemVersion } = await retrieve(api, injectedPromise);
@@ -186,7 +188,6 @@ async function loadOnReady(api: ApiPromise, endpoint: LinkOption | null, injecte
     apiDefaultTx,
     apiDefaultTxSudo,
     chainSS58,
-    tokenDecimals: tokenDecimals.map((b) => b.toNumber())[0],
     hasInjectedAccounts: injectedAccounts.length !== 0,
     isApiReady: true,
     isDevelopment,
@@ -195,7 +196,8 @@ async function loadOnReady(api: ApiPromise, endpoint: LinkOption | null, injecte
     specVersion: api.runtimeVersion.specVersion.toString(),
     systemChain,
     systemName,
-    systemVersion
+    systemVersion,
+    tokenDecimals: tokenDecimals.map((b) => b.toNumber())[0]
   };
 }
 
@@ -203,7 +205,7 @@ async function loadOnReady(api: ApiPromise, endpoint: LinkOption | null, injecte
  * @internal
  * Creates a ScProvider from a <relay>[/parachain] string
  */
-async function getLightProvider(chain: string): Promise<ScProvider> {
+async function getLightProvider (chain: string): Promise<ScProvider> {
   const [sc, relayName, paraName] = chain.split('/');
 
   if (sc !== 'substrate-connect') {
@@ -228,7 +230,7 @@ async function getLightProvider(chain: string): Promise<ScProvider> {
 /**
  * @internal
  */
-async function createApi(apiUrl: string, signer: ApiSigner, onError: (error: unknown) => void): Promise<Record<string, Record<string, string>>> {
+async function createApi (activeChain: Chain, apiUrl: string, signer: ApiSigner, onError: (error: unknown) => void): Promise<Record<string, Record<string, string>>> {
   const types = getDevTypes();
   const isLight = apiUrl.startsWith('light://');
 
@@ -240,8 +242,9 @@ async function createApi(apiUrl: string, signer: ApiSigner, onError: (error: unk
     statics.api = new ApiPromise({
       provider,
       registry: statics.registry,
+      rpc: activeChain.definitions.rpc,
       signer,
-      types,
+      types: activeChain.definitions.types![0].types,
       typesBundle
     });
 
@@ -256,7 +259,8 @@ async function createApi(apiUrl: string, signer: ApiSigner, onError: (error: unk
   return types;
 }
 
-export function ApiCtxRoot({ apiUrl, children, isElectron, store }: Props): React.ReactElement<Props> | null {
+export function ApiCtxRoot ({ apiUrl, children, isElectron, store }: Props): React.ReactElement<Props> | null {
+  const { activeChain } = useChain();
   const { queuePayload, queueSetTxStatus } = useQueue();
   const [state, setState] = useState<ApiState>(EMPTY_STATE);
   const [isApiConnected, setIsApiConnected] = useState(false);
@@ -288,7 +292,7 @@ export function ApiCtxRoot({ apiUrl, children, isElectron, store }: Props): Reac
       setApiError((error as Error).message);
     };
 
-    createApi(apiUrl, new ApiSigner(statics.registry, queuePayload, queueSetTxStatus), onError)
+    createApi(activeChain, apiUrl, new ApiSigner(statics.registry, queuePayload, queueSetTxStatus), onError)
       .then((types): void => {
         statics.api.on('connected', () => setIsApiConnected(true));
         statics.api.on('disconnected', () => setIsApiConnected(false));
@@ -308,7 +312,7 @@ export function ApiCtxRoot({ apiUrl, children, isElectron, store }: Props): Reac
         setIsApiInitialized(true);
       })
       .catch(onError);
-  }, [apiEndpoint, apiUrl, queuePayload, queueSetTxStatus, store]);
+  }, [activeChain, apiEndpoint, apiUrl, queuePayload, queueSetTxStatus, store]);
 
   if (!value.isApiInitialized) {
     return null;

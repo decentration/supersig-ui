@@ -1,10 +1,11 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Chain } from '../../types/index.js';
+
 import React, { createContext, type ReactNode, useContext, useState } from 'react';
 
 import { defaultChain } from '../../config/chains/index.js';
-import type { Chain } from '../../types/index.js';
 
 interface ChainContextProps {
   activeChain: Chain;
@@ -19,13 +20,13 @@ interface ChainProviderProps {
 
 const ChainContext = createContext<ChainContextProps>({
   activeChain: defaultChain,
+  activeRpc: 'wss://soupcan1.jelliedowl.com',
   setActiveChain: () => {
     /** set selected chain */
   },
-  activeRpc: 'wss://soupcan1.jelliedowl.com',
   setActiveRpc: () => {
     /** set selected rpc */
-  },
+  }
 });
 
 const ChainProvider = ({ children }: ChainProviderProps) => {
@@ -38,9 +39,9 @@ const ChainProvider = ({ children }: ChainProviderProps) => {
     <ChainContext.Provider
       value={{
         activeChain,
-        setActiveChain,
         activeRpc,
-        setActiveRpc,
+        setActiveChain,
+        setActiveRpc
       }}
     >
       {children}

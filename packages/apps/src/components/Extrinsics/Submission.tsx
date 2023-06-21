@@ -1,21 +1,13 @@
 // Copyright 2017-2023 @polkadot/app-extrinsics authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type {
-  SubmittableExtrinsic,
-  SubmittableExtrinsicFunction,
-} from '@polkadot/api/types';
+import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { RawParam } from '@polkadot/react-params/types';
 import type { DecodedExtrinsic } from './types.js';
 
 import React, { useCallback, useState } from 'react';
 
-import {
-  Button,
-  InputAddress,
-  MarkError,
-  TxButton,
-} from '@polkadot/react-components';
+import { Button, InputAddress, MarkError, TxButton } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { Extrinsic } from '@polkadot/react-params';
 import { BalanceFree } from '@polkadot/react-query';
@@ -32,7 +24,7 @@ interface DefaultExtrinsic {
   defaultFn: SubmittableExtrinsicFunction<'promise'>;
 }
 
-function extractDefaults(
+function extractDefaults (
   value: DecodedExtrinsic | null,
   defaultFn: SubmittableExtrinsicFunction<'promise'>
 ): DefaultExtrinsic {
@@ -43,16 +35,14 @@ function extractDefaults(
   return {
     defaultArgs: value.call.args.map((value) => ({
       isValid: true,
-      value,
+      value
     })),
-    defaultFn: value.fn,
+    defaultFn: value.fn
   };
 }
 
-function Selection({
-  className,
-  defaultValue,
-}: Props): React.ReactElement<Props> {
+function Selection ({ className,
+  defaultValue }: Props): React.ReactElement<Props> {
   const { apiDefaultTxSudo } = useApi();
   const [accountId, setAccountId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +69,7 @@ function Selection({
         label='using the selected account'
         labelExtra={
           <BalanceFree
-            label={<label>'free balance'</label>}
+            label={<label>free balance</label>}
             params={accountId}
           />
         }
@@ -93,7 +83,10 @@ function Selection({
         onChange={_onExtrinsicChange}
         onError={_onExtrinsicError}
       />
-      <Decoded extrinsic={extrinsic} isCall />
+      <Decoded
+        extrinsic={extrinsic}
+        isCall
+      />
       {error && !extrinsic && <MarkError content={error} />}
       <Button.Group>
         <TxButton

@@ -7,11 +7,12 @@ import type { Account, Balance, MemberInfo, MemberRole, ProposalDetails, Proposa
 import { Accordion, AccordionDetails, AccordionSummary, Box, Link } from '@mui/material';
 import React from 'react';
 
-import { useApi } from '../../contexts/Api/index.js';
-import { formatBalance } from '../../utils/index.js';
+import { useApi } from '@polkadot/react-hooks';
 import { CallExpander } from '@polkadot/react-params';
-import { decodeAddress } from '@polkadot/util-crypto';
 import { u8aToHex } from '@polkadot/util';
+import { decodeAddress } from '@polkadot/util-crypto';
+
+import { formatBalance } from '../../utils/index.js';
 import { ExpandMoreIcon } from '../Icon/index.js';
 
 interface ProposalDetailInterface {
@@ -51,7 +52,7 @@ const Card: FC<CardInterface> = ({ content, heading }) => {
 };
 
 const Voter: FC<VoterInterface> = ({ balance, role, voter }) => {
-  const { decimals } = useApi();
+  const { tokenDecimals: decimals } = useApi();
 
   return (
     <Box
@@ -71,8 +72,8 @@ const Voter: FC<VoterInterface> = ({ balance, role, voter }) => {
   );
 };
 
-export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigAccount,
-  proposals }) => {
+export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, proposals,
+  supersigAccount }) => {
   const { api } = useApi();
 
   const getVoteInfo = (voter: Account) => {
@@ -87,10 +88,11 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigA
     };
   };
 
-  const getVoteLink = (id: number) => { 
+  const getVoteLink = (id: number) => {
     // FIXME: get the link with call encoding
     const nonce = u8aToHex(decodeAddress(supersigAccount)).toString();
-    const link = '/extrinsic/0x2a026d6f646c69642f7375736967' + nonce.slice(26, 28) + '00000000000000000000000000000000000000' + id;
+    const link = `/extrinsic/0x2a026d6f646c69642f7375736967${nonce.slice(26, 28)}00000000000000000000000000000000000000${id}`;
+
     return link;
   };
 
@@ -98,14 +100,14 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigA
     <Accordion sx={sxs.accordion}>
       <AccordionSummary
         aria-controls='panel1a-content'
-        id='panel1a-header'
         expandIcon={ExpandMoreIcon}
+        id='panel1a-header'
       >
         {proposals.proposals_info.length}
       </AccordionSummary>
       <AccordionDetails>
         {proposals.proposals_info.map(
-          ({ encoded_call, provider, voters, id }: ProposalDetails, index) => {
+          ({ encoded_call, id, provider, voters }: ProposalDetails, index) => {
             const extrinsicCall = api.createType(
               'Call',
               encoded_call.toString()
@@ -122,8 +124,8 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigA
               >
                 <AccordionSummary
                   aria-controls='panel1a-content'
-                  id='panel1a-header'
                   expandIcon={ExpandMoreIcon}
+                  id='panel1a-header'
                 >
                   {`${section}.${method}`}
                 </AccordionSummary>
@@ -131,8 +133,8 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigA
                   <Accordion sx={sxs.accordion}>
                     <AccordionSummary
                       aria-controls='panel1a-content'
-                      id='panel1a-header'
                       expandIcon={ExpandMoreIcon}
+                      id='panel1a-header'
                     >
                       {`Voters(${voters.length}/${proposals.no_of_members})`}
                     </AccordionSummary>
@@ -146,16 +148,16 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, supersigA
                     </AccordionDetails>
                   </Accordion>
                   <Link
-                    sx={{ marginY: 2 }}
                     href={getVoteLink(id)}
+                    sx={{ marginY: 2 }}
                   >
                     Vote
                   </Link>
                   <Accordion sx={sxs.accordion}>
                     <AccordionSummary
                       aria-controls='panel1a-content'
-                      id='panel1a-header'
                       expandIcon={ExpandMoreIcon}
+                      id='panel1a-header'
                     >
                       Proposal Info
                     </AccordionSummary>

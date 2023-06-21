@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Alert, Snackbar } from '@mui/material';
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface ToastManager {
   toastSuccess: (_msg: string, _duration?: number) => void;
@@ -11,15 +11,15 @@ interface ToastManager {
 }
 
 const defaultToastManager = {
-  toastSuccess: () => {
-    /* */
-  },
   toastError: () => {
     /* */
   },
   toastInfo: () => {
     /* */
   },
+  toastSuccess: () => {
+    /* */
+  }
 };
 
 const ToastContext = createContext<ToastManager>(defaultToastManager);
@@ -47,43 +47,43 @@ const ToastProvider = ({ children }: Props) => {
 
   const toastSuccess = (message: string, duration = 3000) => {
     addToast({
-      message,
       duration,
-      type: 'success',
+      message,
+      type: 'success'
     });
   };
 
   const toastError = (message: string, duration = 3000) => {
     addToast({
-      message,
       duration,
-      type: 'error',
+      message,
+      type: 'error'
     });
   };
 
   const toastInfo = (message: string, duration = 3000) => {
     addToast({
-      message,
       duration,
-      type: 'info',
+      message,
+      type: 'info'
     });
   };
 
   return (
-    <ToastContext.Provider value={{ toastSuccess, toastError, toastInfo }}>
+    <ToastContext.Provider value={{ toastError, toastInfo, toastSuccess }}>
       {children}
-      {toasts.map(({ duration, type, message }, index) => (
+      {toasts.map(({ duration, message, type }, index) => (
         <Snackbar
-          key={index}
-          open
           autoHideDuration={duration}
+          key={index}
           onClose={() => removeToast(index)}
+          open
         >
           <Alert
             onClose={() => removeToast(index)}
             severity={type}
-            variant='filled'
             sx={{ width: '100%' }}
+            variant='filled'
           >
             {message}
           </Alert>

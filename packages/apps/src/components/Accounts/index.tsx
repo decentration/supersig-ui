@@ -6,14 +6,15 @@ import type { Balance } from '../../types/index.js';
 import { Backdrop, Box, Checkbox, CircularProgress, FormControlLabel, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
+import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { useAccounts, useApi } from '../../contexts/index.js';
+import { useAccounts } from '../../contexts/index.js';
 import { formatBalance, getFreeBalance } from '../../utils/index.js';
 
 export const Accounts = () => {
-  const { api, decimals, isConnecting, ss58Format } = useApi();
+  const { api, chainSS58, isApiReady, tokenDecimals: decimals } = useApi();
   const { accounts } = useAccounts();
   const [balances, setBalances] = useState<Array<Balance>>([]);
   const [emptyShow, showEmpty] = useState(true);
@@ -78,7 +79,7 @@ export const Accounts = () => {
                         {accounts[index].meta.name}
                       </Typography>
                       <Typography variant='h6'>
-                        {encodeAddress(accounts[index].address, ss58Format)}
+                        {encodeAddress(accounts[index].address, chainSS58)}
                       </Typography>
                     </TableCell>
                     <TableCell>{formatBalance(balance, decimals)}</TableCell>
@@ -89,7 +90,7 @@ export const Accounts = () => {
         </Table>
       </Box>
       <Backdrop
-        open={isConnecting || loading}
+        open={!isApiReady || loading}
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <CircularProgress color='inherit' />

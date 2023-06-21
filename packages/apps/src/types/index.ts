@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { OverrideBundleDefinition } from '@polkadot/types/types';
-import { BN } from '@polkadot/util';
+import type { BN } from '@polkadot/util';
 
 export interface Chain {
   // rpc(rpc: any): unknown;
