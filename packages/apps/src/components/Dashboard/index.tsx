@@ -6,11 +6,12 @@ import type { Account, Balance, MemberInfo, MemberRole, ProposalsInfo, SupersigI
 import { Backdrop, Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
+import { AddressSmall } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { formatAccount, formatBalance, getFreeBalance, getReservedBalance } from '../../utils/index.js';
+import { formatBalance, getFreeBalance, getReservedBalance } from '../../utils/index.js';
 import { BalanceDetail } from './BalanceDetail.js';
 import { ProposalDetail } from './ProposalDetail.js';
 import { Summary } from './Summary.js';
@@ -236,7 +237,7 @@ export const Dashboard = () => {
                     component='th'
                     scope='row'
                   >
-                    {formatAccount(account)}
+                    <AddressSmall value={account} />
                   </TableCell>
                   <TableCell>
                     <ProposalDetail
