@@ -6,6 +6,7 @@ import './App.css';
 import type { ThemeDef } from '@polkadot/react-components/types';
 import type { DecodedExtrinsic } from './components/Extrinsics/types.js';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -30,92 +31,92 @@ function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
 
 const App = () => {
   const [theme] = useState(() => createTheme({ uiTheme: 'light' }));
-  const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
 
-  return (
-    <ThemeProvider theme={theme}>
-      <ToastProvider>
-        <ChainProvider>
-          <ApiCtxRoot
-            apiUrl={'wss://soupcan1.jelliedowl.com'}
-            isElectron={false}
-          >
-            <AccountsProvider>
-              <Router>
-                <div className='app-container'>
-                  <div className='header-container'>
-                    <Header />
-                  </div>
-                  <div className='sidebar-container'>
-                    <Sidebar />
-                  </div>
-                  <div className='main-content'>
-                    <Routes>
-                      <Route
-                        element={
-                          <Navigate
-                            replace
-                            to='/dashboard'
-                          />
-                        }
-                        index
+  const Main = () => {
+    const { activeRpc } = useChain();
+    const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
+
+    return (
+      <ApiCtxRoot
+        apiUrl={activeRpc}
+        isElectron={false}
+      >
+        <AccountsProvider>
+          <Router>
+            <div className='app-container'>
+              <div className='header-container'>
+                <Header />
+              </div>
+              <div className='sidebar-container'>
+                <Sidebar />
+              </div>
+              <div className='main-content'>
+                <Routes>
+                  <Route
+                    element={
+                      <Navigate
+                        replace
+                        to='/dashboard'
                       />
-                      <Route
-                        element={<Dashboard />}
-                        path='/dashboard'
-                      />
-                      <Route
-                        element={
-                          <LoadingWrapper>
-                            <Submission defaultValue={decoded} />
-                          </LoadingWrapper>
-                        }
-                        path='/extrinsic'
-                      />
-                      <Route
-                        element={
-                          <LoadingWrapper>
-                            <Submission defaultValue={decoded} />
-                          </LoadingWrapper>
-                        }
-                        path='/extrinsic/:encoded'
-                      />
-                      <Route
-                        element={
-                          <LoadingWrapper>
-                            <Decoder
-                              defaultValue={decoded && decoded.hex}
-                              setLast={setDecoded}
-                            />
-                          </LoadingWrapper>
-                        }
-                        path='/decode'
-                      />
-                      <Route
-                        element={
-                          <LoadingWrapper>
-                            <Decoder
-                              defaultValue={decoded && decoded.hex}
-                              setLast={setDecoded}
-                            />
-                          </LoadingWrapper>
-                        }
-                        path='/decode/:encoded'
-                      />
-                      <Route
-                        element={<Accounts />}
-                        path='/wallet/accounts'
-                      />
-                      {/* <Route path='/settings' element={<Settings />} />
+                    }
+                    index
+                  />
+                  <Route
+                    element={<Dashboard />}
+                    path='/dashboard'
+                  />
+                  <Route
+                    element={
+                      <LoadingWrapper>
+                        <Submission defaultValue={decoded} />
+                      </LoadingWrapper>
+                    }
+                    path='/extrinsic'
+                  />
+                  <Route
+                    element={
+                      <LoadingWrapper>
+                        <Submission defaultValue={decoded} />
+                      </LoadingWrapper>
+                    }
+                    path='/extrinsic/:encoded'
+                  />
+                  <Route
+                    element={
+                      <LoadingWrapper>
+                        <Decoder
+                          defaultValue={decoded && decoded.hex}
+                          setLast={setDecoded}
+                        />
+                      </LoadingWrapper>
+                    }
+                    path='/decode'
+                  />
+                  <Route
+                    element={
+                      <LoadingWrapper>
+                        <Decoder
+                          defaultValue={decoded && decoded.hex}
+                          setLast={setDecoded}
+                        />
+                      </LoadingWrapper>
+                    }
+                    path='/decode/:encoded'
+                  />
+                  <Route
+                    element={<Accounts />}
+                    path='/wallet/accounts'
+                  />
+                  {/* <Route path='/settings' element={<Settings />} />
                   <Route path='/register' element={<RegistrationForm />} />
                   <Route
                     path='/authorize-payment'
                     element={<PaymentAuthorization />}
                   /> */}
-                    </Routes>
-                  </div>
-                </div>
-                {/* <Modal
+                </Routes>
+              </div>
+            </div>
+            {/* <Modal
             isOpen={isMembershipDetailsOpen}
             onClose={handleCloseMembershipDetailsModal}
           >
@@ -133,9 +134,16 @@ const App = () => {
               setMode={setMode}
             />
           </Modal> */}
-              </Router>
-            </AccountsProvider>
-          </ApiCtxRoot>
+          </Router>
+        </AccountsProvider>
+      </ApiCtxRoot>);
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <ToastProvider>
+        <ChainProvider>
+          <Main />
         </ChainProvider>
       </ToastProvider>
     </ThemeProvider>
