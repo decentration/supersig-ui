@@ -11,7 +11,7 @@ import {
 import './App.css';
 
 import { ApiCtxRoot } from '@polkadot/react-api';
-import { Header, Accounts, Dashboard, Sidebar } from './components/index.js';
+import { Header, Accounts, Dashboard, Sidebar, LoadingWrapper } from './components/index.js';
 import { ToastProvider, ChainProvider, ApiProvider, AccountsProvider, useChain } from './contexts/index.js';
 import Submission from './components/Extrinsics/Submission.js';
 
@@ -49,7 +49,7 @@ const App = () => {
                         path='/organisations/dashboard'
                         element={<Dashboard />}
                       />
-                      <Route path='/organisations/create' element={<Submission defaultValue={null} />} />
+                      <Route path='/organisations/create' element={<LoadingWrapper><Submission defaultValue={null} /></LoadingWrapper>} />
                       {/* <Route
                         element={
                           <Decoder
