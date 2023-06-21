@@ -21,7 +21,6 @@ export const chains: Chain[] = [
     definitions: kabochaDefinitions,
     name: 'Kabocha',
     rpcEndpoints: [
-      'wss://kabocha1.jelliedowl.com',
       'wss://kabocha.jelliedowl.com'
     ],
     ss58Format: 27

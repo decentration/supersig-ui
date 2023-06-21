@@ -56514,22 +56514,6 @@ export const typesBundle = {
             null
           ],
           "types": {
-            "CallId": "u32",
-            "FetchListProposals": {
-              "no_of_members": "u32",
-              "proposals_info": "ProposalStates"
-            },
-            "FetchProposalState": {
-              "no_of_members": "u32",
-              "proposal_info": "ProposalState<AccountId>"
-            },
-            "ProposalState": {
-              "encoded_call": "Vec<u8>",
-              "id": "CallId",
-              "provider": "AccountId",
-              "voters": "Vec<AccountId>"
-            },
-            "ProposalStates": "Vec<ProposalState<AccountId>>",
             "Role": {
               "_enum": {
                 "Master": "Vec<u8>",
@@ -56537,7 +56521,23 @@ export const typesBundle = {
                 "Standard": "Vec<u8>"
               }
             },
-            "SupersigId": "u132"
+            "CallId": "u32",
+            "FetchListProposals": {
+              "proposals_info": "ProposalStates",
+              "no_of_members": "u32"
+            },
+            "FetchProposalState": {
+              "no_of_members": "u32",
+              "proposal_info": "ProposalState<AccountId>"
+            },
+            "SupersigId": "u132",
+            "ProposalState": {
+              "id": "CallId",
+              "encoded_call": "Vec<u8>",
+              "provider": "AccountId",
+              "voters": "Vec<AccountId>"
+            },
+            "ProposalStates": "Vec<ProposalState<AccountId>>"
           }
         }
       ]
