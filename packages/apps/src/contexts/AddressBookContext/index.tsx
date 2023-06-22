@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface Contact {
+export interface Contact {
   name: string;
   address: string;
 }
@@ -16,11 +16,16 @@ const AddressBookContext = createContext<AddressBookContextProps>({
 });
 
 export const AddressBookProvider = ({ children }) => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>(JSON.parse(localStorage.getItem('contacts') || '[]'));
 
   const addContact = (contact: Contact) => {
-    setContacts(prevContacts => [...prevContacts, contact]);
+    setContacts(prevContacts => {
+      const updatedContacts = [...prevContacts, contact];
+      console.log('Contacts after adding new one: ', updatedContacts);
+      return updatedContacts;
+    });
   };
+  
 
   return (
     <AddressBookContext.Provider value={{ contacts, addContact }}>

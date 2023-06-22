@@ -125,12 +125,12 @@ export const Sidebar = () => {
         </ListItem>
         <ListItem
           className={
-            isActive('/addresses')
+            isActive('/address-book')
               ? 'active-link sidebar-button'
               : 'sidebar-button'
           }
           component={Link}
-          to='/addresses'
+          to='/address-book'
         >
           <ListItemIcon>
             <FontAwesomeIcon

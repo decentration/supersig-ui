@@ -2,15 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-
-import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
-
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { useApi } from '@polkadot/react-hooks';
 import { keyring } from '@polkadot/ui-keyring';
-
 import { generateSupersigAccounts } from '../../utils/index.js';
 import { useAddressBook } from '../AddressBookContext/index.tsx';
+import type { Contact } from '../AddressBookContext/index.tsx';
 
 
 interface AccountsContextProps {
@@ -18,12 +16,11 @@ interface AccountsContextProps {
 }
 
 interface AccountsProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-// Create the context with default values
 const AccountsContext = createContext<AccountsContextProps>({
-  accounts: []
+  accounts: [],
 });
 
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
@@ -31,9 +28,11 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const { contacts } = useAddressBook();
 
-
   useEffect(() => {
+    console.log('Running supersig accounts effect');
+
     if (!api || !isApiReady) {
+      console.log('API is not ready yet');
       return;
     }
 
@@ -42,34 +41,43 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
 
     for (const account of accounts) {
       const { address, meta } = account;
-
+      console.log(`Saving supersig account with address: ${address}`);
       keyring.saveAddress(address, { ...meta }, 'address');
     }
   }, [api, isApiReady, chainSS58]);
 
+  console.log('Contacts before useEffect: ', contacts);
+
   useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+
     const fetchAccounts = async () => {
       try {
         await web3Enable('Supersig UI');
         const allAccounts = await web3Accounts();
+        console.log('Fetched accounts: ', allAccounts);
 
+  
         // Add the addresses from the AddressBookContext to the accounts array
-        const accountsWithContacts = allAccounts.concat(contacts.map((contact: { address: any; name: any; }) => ({
+        const accountsWithContacts = allAccounts.concat(contacts.map((contact: Contact) => ({
           address: contact.address,
           meta: { name: contact.name, source: 'AddressBook' },
           type: 'sr25519',
         })));
+  
+        console.log('this is', accountsWithContacts); 
 
         setAccounts(accountsWithContacts);
-
+  
       } catch (_error) {
         // No accounts found
         setAccounts([]);
       }
     };
-
+  
     fetchAccounts();
-  }, []);
+  }, [contacts]);
+  
 
   return (
     <AccountsContext.Provider value={{ accounts }}>
@@ -77,6 +85,7 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
     </AccountsContext.Provider>
   );
 };
+
 
 const useAccounts = () => useContext(AccountsContext);
 

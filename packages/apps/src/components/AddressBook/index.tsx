@@ -18,9 +18,11 @@ export const AddressBook = () => {
 
   const handleSubmit = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
+    console.log('Adding contact with name: ', name, ' and address: ', address); // add this line
     addContact({ name, address });
     handleClose();
   };
+  
 
 
   return (

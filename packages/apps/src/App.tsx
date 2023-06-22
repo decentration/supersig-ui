@@ -45,8 +45,7 @@ import {
 } from './contexts/index.js';
 import { darkTheme, lightTheme } from './themes.js';
 import { AddressBookProvider } from './contexts/AddressBookContext';
-import AddressApp  from './pages/page-addresses/src/index.tsx';
-import AccountsApp  from './pages/page-accounts/src/index.tsx';
+import { AddressBook } from './components/AddressBook';
 
 function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
     const validTheme = uiTheme === 'dark' ? 'dark' : 'light';
@@ -136,9 +135,9 @@ const App = () => {
                                                                 element={<Accounts />}
                                                                 path='/wallet/accounts'
                                                             />
-                                                            <Route 
-                                                                element={<AddressApp basePath='/addresses' onStatusChange={() => {}} />} 
-                                                                path='/addresses' 
+                                                             <Route 
+                                                             element={<AddressBook />} 
+                                                             path='/address-book' 
                                                             />
                                                         </Routes>
                                                     </div>
