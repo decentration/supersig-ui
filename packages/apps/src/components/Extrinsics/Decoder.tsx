@@ -4,7 +4,6 @@
 import type { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import type { Call } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
-import type { DecodedExtrinsic } from './types.js';
 
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -19,7 +18,6 @@ import Decoded from './Decoded.js';
 interface Props {
     className?: string;
     defaultValue?: HexString | null;
-    setLast: (value: DecodedExtrinsic | null) => void;
 }
 
 interface ExtrinsicInfo {
@@ -42,7 +40,7 @@ const DEFAULT_INFO: ExtrinsicInfo = {
     isCall: true
 };
 
-function Decoder({ className, defaultValue, setLast }: Props): React.ReactElement<Props> {
+function Decoder({ className, defaultValue }: Props): React.ReactElement<Props> {
     const { encoded } = useParams<{ encoded: string }>();
     const [initialValue] = useState(() => defaultValue || encoded);
     const { api } = useApi();
@@ -77,15 +75,11 @@ function Decoder({ className, defaultValue, setLast }: Props): React.ReactElemen
                 }
 
                 setExtrinsicInfo({ ...DEFAULT_INFO, decoded, extrinsicCall, extrinsicFn, extrinsicHex: hex, extrinsicKey, isCall });
-
-                if (defaultValue !== hex)
-                    setLast({ call: extrinsicCall, fn: extrinsicFn, hex });
             } catch (e) {
                 setExtrinsicInfo({ ...DEFAULT_INFO, extrinsicError: (e as Error).message });
-                setLast(null);
             }
         },
-        [api, setLast]
+        [api]
     );
 
     return (
