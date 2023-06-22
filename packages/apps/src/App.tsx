@@ -44,6 +44,9 @@ import {
     useChain,
 } from './contexts/index.js';
 import { darkTheme, lightTheme } from './themes.js';
+import { AddressBookProvider } from './contexts/AddressBookContext';
+import AddressApp  from './pages/page-addresses/src/index.tsx';
+import AccountsApp  from './pages/page-accounts/src/index.tsx';
 
 function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
     const validTheme = uiTheme === 'dark' ? 'dark' : 'light';
@@ -75,68 +78,74 @@ const App = () => {
                         <BlockAuthorsCtxRoot>
                             <BlockEventsCtxRoot>
                                 <AccountsProvider>
-                                    <Signer>
-                                        <Router>
-                                            <div className='app-container'>
-                                                <Status />
-                                                <div className='header-container'>
-                                                    <Header />
+                                    <AddressBookProvider>
+                                        <Signer>
+                                            <Router>
+                                                <div className='app-container'>
+                                                    <Status />
+                                                    <div className='header-container'>
+                                                        <Header />
+                                                    </div>
+                                                    <div className='sidebar-container'>
+                                                        <Sidebar />
+                                                    </div>
+                                                    <div className='main-content'>
+                                                        <Routes>
+                                                            <Route
+                                                                element={<Navigate replace to='/dashboard' />}
+                                                                index
+                                                            />
+                                                            <Route element={<Dashboard />} path='/dashboard' />
+                                                            <Route
+                                                                element={
+                                                                    <LoadingWrapper>
+                                                                        <Submission defaultValue={decoded} />
+                                                                    </LoadingWrapper>
+                                                                }
+                                                                path='/extrinsic'
+                                                            />
+                                                            <Route
+                                                                element={
+                                                                    <LoadingWrapper>
+                                                                        <Submission defaultValue={decoded} />
+                                                                    </LoadingWrapper>
+                                                                }
+                                                                path='/extrinsic/:encoded'
+                                                            />
+                                                            <Route
+                                                                element={
+                                                                    <LoadingWrapper>
+                                                                        <Decoder
+                                                                            defaultValue={decoded && decoded.hex}
+                                                                        />
+                                                                    </LoadingWrapper>
+                                                                }
+                                                                path='/decode'
+                                                            />
+                                                            <Route
+                                                                element={
+                                                                    <LoadingWrapper>
+                                                                        <Decoder
+                                                                            defaultValue={decoded && decoded.hex}
+                                                                        />
+                                                                    </LoadingWrapper>
+                                                                }
+                                                                path='/decode/:encoded'
+                                                            />
+                                                            <Route
+                                                                element={<Accounts />}
+                                                                path='/wallet/accounts'
+                                                            />
+                                                            <Route 
+                                                                element={<AddressApp basePath='/addresses' onStatusChange={() => {}} />} 
+                                                                path='/addresses' 
+                                                            />
+                                                        </Routes>
+                                                    </div>
                                                 </div>
-                                                <div className='sidebar-container'>
-                                                    <Sidebar />
-                                                </div>
-                                                <div className='main-content'>
-                                                    <Routes>
-                                                        <Route
-                                                            element={<Navigate replace to='/dashboard' />}
-                                                            index
-                                                        />
-                                                        <Route element={<Dashboard />} path='/dashboard' />
-                                                        <Route
-                                                            element={
-                                                                <LoadingWrapper>
-                                                                    <Submission defaultValue={decoded} />
-                                                                </LoadingWrapper>
-                                                            }
-                                                            path='/extrinsic'
-                                                        />
-                                                        <Route
-                                                            element={
-                                                                <LoadingWrapper>
-                                                                    <Submission defaultValue={decoded} />
-                                                                </LoadingWrapper>
-                                                            }
-                                                            path='/extrinsic/:encoded'
-                                                        />
-                                                        <Route
-                                                            element={
-                                                                <LoadingWrapper>
-                                                                    <Decoder
-                                                                        defaultValue={decoded && decoded.hex}
-                                                                    />
-                                                                </LoadingWrapper>
-                                                            }
-                                                            path='/decode'
-                                                        />
-                                                        <Route
-                                                            element={
-                                                                <LoadingWrapper>
-                                                                    <Decoder
-                                                                        defaultValue={decoded && decoded.hex}
-                                                                    />
-                                                                </LoadingWrapper>
-                                                            }
-                                                            path='/decode/:encoded'
-                                                        />
-                                                        <Route
-                                                            element={<Accounts />}
-                                                            path='/wallet/accounts'
-                                                        />
-                                                    </Routes>
-                                                </div>
-                                            </div>
-                                        </Router>
-                                    </Signer>
+                                            </Router>
+                                        </Signer>
+                                     </AddressBookProvider>
                                 </AccountsProvider>
                             </BlockEventsCtxRoot>
                         </BlockAuthorsCtxRoot>

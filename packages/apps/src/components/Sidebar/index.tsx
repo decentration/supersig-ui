@@ -3,7 +3,7 @@
 
 import './Sidebar.css';
 
-import { faCode, faCog, faFileAlt, faPlus, faUsers, faWallet } from '@fortawesome/free-solid-svg-icons';
+import { faCode, faCog, faFileAlt, faPlus, faUsers, faWallet, faAddressBook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import React, { useState } from 'react';
@@ -122,6 +122,23 @@ export const Sidebar = () => {
             />
           </ListItemIcon>
           <ListItemText primary='Accounts' />
+        </ListItem>
+        <ListItem
+          className={
+            isActive('/addresses')
+              ? 'active-link sidebar-button'
+              : 'sidebar-button'
+          }
+          component={Link}
+          to='/addresses'
+        >
+          <ListItemIcon>
+            <FontAwesomeIcon
+              icon={faAddressBook} 
+              style={{ marginRight: '5px' }}
+            />
+          </ListItemIcon>
+          <ListItemText primary='Address Book' />
         </ListItem>
         <ListItem
           className={

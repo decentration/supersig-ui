@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Account, Balance, MemberInfo, MemberRole, ProposalsInfo, SupersigInfo } from '../../types/index.js';
-
+import { Link } from 'react-router-dom';
 import { Backdrop, Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
@@ -178,7 +178,8 @@ useEffect(() => {
           ].map(({ clickHandler, title }, index) => (
             <Button
               key={index}
-              onClick={clickHandler}
+              component={Link}
+              to="/extrinsic"
               sx={{ ...sxs.button }}
               variant='outlined'
             >

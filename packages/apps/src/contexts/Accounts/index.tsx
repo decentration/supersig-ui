@@ -10,6 +10,8 @@ import { useApi } from '@polkadot/react-hooks';
 import { keyring } from '@polkadot/ui-keyring';
 
 import { generateSupersigAccounts } from '../../utils/index.js';
+import { useAddressBook } from '../AddressBookContext/index.tsx';
+
 
 interface AccountsContextProps {
   accounts: InjectedAccountWithMeta[];
@@ -27,6 +29,8 @@ const AccountsContext = createContext<AccountsContextProps>({
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
   const { api, chainSS58, isApiReady } = useApi();
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const { contacts } = useAddressBook();
+
 
   useEffect(() => {
     if (!api || !isApiReady) {
@@ -49,7 +53,15 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
         await web3Enable('Supersig UI');
         const allAccounts = await web3Accounts();
 
-        setAccounts(allAccounts);
+        // Add the addresses from the AddressBookContext to the accounts array
+        const accountsWithContacts = allAccounts.concat(contacts.map((contact: { address: any; name: any; }) => ({
+          address: contact.address,
+          meta: { name: contact.name, source: 'AddressBook' },
+          type: 'sr25519',
+        })));
+
+        setAccounts(accountsWithContacts);
+
       } catch (_error) {
         // No accounts found
         setAccounts([]);
