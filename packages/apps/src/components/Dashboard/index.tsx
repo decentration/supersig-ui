@@ -217,7 +217,7 @@ useEffect(() => {
                     component='th'
                     scope='row'
                   >
-                    <AddressSmall value={account} />
+                  <AddressSmall value={account} />
                   </TableCell>
                   <TableCell>
                     <ProposalDetail

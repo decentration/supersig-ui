@@ -46,6 +46,7 @@ import {
 import { darkTheme, lightTheme } from './themes.js';
 import { AddressBookProvider } from './contexts/AddressBookContext';
 import { AddressBook } from './components/AddressBook';
+import Settings from './components/Settings/index.tsx';
 
 function createTheme({ uiTheme }: { uiTheme: string }): ThemeDef {
     const validTheme = uiTheme === 'dark' ? 'dark' : 'light';
@@ -76,8 +77,8 @@ const App = () => {
                     <ApiStatsCtxRoot>
                         <BlockAuthorsCtxRoot>
                             <BlockEventsCtxRoot>
-                                <AccountsProvider>
-                                    <AddressBookProvider>
+                            <AddressBookProvider>
+                                    <AccountsProvider>
                                         <Signer>
                                             <Router>
                                                 <div className='app-container'>
@@ -139,17 +140,24 @@ const App = () => {
                                                              element={<AddressBook />} 
                                                              path='/address-book' 
                                                             />
+                                                            <Route
+                                                                element={<Settings />}
+                                                                path='/settings'
+                                                            />
                                                         </Routes>
                                                     </div>
                                                 </div>
                                             </Router>
                                         </Signer>
-                                     </AddressBookProvider>
-                                </AccountsProvider>
+                                     
+                                    </AccountsProvider>
+                                    </AddressBookProvider>
+
                             </BlockEventsCtxRoot>
                         </BlockAuthorsCtxRoot>
                     </ApiStatsCtxRoot>
                 </KeyringCtxRoot>
+
             </ApiCtxRoot>
         );
     };

@@ -37,7 +37,7 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
     }
 
     const palletId = api.consts.supersig.palletId.toString();
-    const accounts = generateSupersigAccounts(20, palletId, chainSS58);
+    const accounts = generateSupersigAccounts(30, palletId, chainSS58);
 
     for (const account of accounts) {
       const { address, meta } = account;
@@ -49,24 +49,25 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
   console.log('Contacts before useEffect: ', contacts);
 
   useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-
     const fetchAccounts = async () => {
       try {
         await web3Enable('Supersig UI');
         const allAccounts = await web3Accounts();
         console.log('Fetched accounts: ', allAccounts);
-
+  
+        const contactsFromLocalStorage = JSON.parse(localStorage.getItem('contacts') || '[]');
+        const allContacts = [...contacts, ...contactsFromLocalStorage];
   
         // Add the addresses from the AddressBookContext to the accounts array
-        const accountsWithContacts = allAccounts.concat(contacts.map((contact: Contact) => ({
+        console.log('Contacts at mapping point: ', allContacts);
+        const accountsWithContacts = allAccounts.concat(allContacts.map((contact: Contact) => ({
           address: contact.address,
           meta: { name: contact.name, source: 'AddressBook' },
           type: 'sr25519',
         })));
   
         console.log('this is', accountsWithContacts); 
-
+  
         setAccounts(accountsWithContacts);
   
       } catch (_error) {
@@ -77,6 +78,10 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
   
     fetchAccounts();
   }, [contacts]);
+  
+
+
+  
   
 
   return (

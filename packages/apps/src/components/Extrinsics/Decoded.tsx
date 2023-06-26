@@ -53,6 +53,16 @@ function extract (isCall: boolean, extrinsic?: SubmittableExtrinsic<'promise'> |
   ];
 }
 
+const formatString = (str: string, startChars = 10, endChars = 10): string => {
+  if(str.length <= startChars + endChars) {
+      return str;
+  } else {
+      return `${str.substring(0, startChars)}...${str.substring(str.length - endChars)}`;
+  }
+}
+
+
+
 function Decoded ({ className, extrinsic, isCall, payload, withData = true, withHash = true }: Props): React.ReactElement<Props> | null {
   const [hex, hash, inspect] = useMemo(
     () => extract(isCall, extrinsic, payload),
@@ -70,13 +80,13 @@ function Decoded ({ className, extrinsic, isCall, payload, withData = true, with
     >
       <Columar.Column>
         {withData && (
-          <Output
-            isDisabled
-            isTrimmed
-            label='encoded call data'
-            value={hex}
-            withCopy
-          />
+         <Output
+         isDisabled
+         isTrimmed
+         label='encoded call data'
+         value={hex}
+         withCopy
+        />
         )}
         {withHash && (
           <Output
@@ -87,6 +97,7 @@ function Decoded ({ className, extrinsic, isCall, payload, withData = true, with
           />
         )}
       </Columar.Column>
+      
       <Columar.Column>
         <DecodedInspect
           hex={hex}

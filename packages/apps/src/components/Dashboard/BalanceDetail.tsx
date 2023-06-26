@@ -12,6 +12,8 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { formatAccount, formatBalance } from '../../utils/index.js';
 import { ExpandMoreIcon } from '../Icon/index.js';
+import { AddressSmall } from '@polkadot/react-components';
+
 
 interface BalanceDetailInterface {
   members: Array<MemberInfo>;
@@ -39,7 +41,9 @@ export const BalanceDetail: FC<BalanceDetailInterface> = ({ members = [] }) => {
       <AccordionDetails>
         {members.map((member, index) => (
           <Box key={index}>
-            {formatAccount(member.account) + ' '}
+            {
+            
+            <AddressSmall value={member.account} /> }
             {formatBalance(member.balance, decimals + 6)} MUNIT
           </Box>
         ))}
