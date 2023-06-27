@@ -5,6 +5,16 @@ import { useState } from 'react';
 import { keyring } from '@polkadot/ui-keyring';
 import { Keyring } from '@polkadot/keyring';
 
+interface Status {
+    chainWorking: boolean;
+    palletExists: boolean;
+    rpcMethodsExist: boolean;
+    supersigCreated: boolean;
+    balanceSent: boolean;
+    transaction: string;
+    errorMessage: string;
+  }
+
 const Settings = () => {
   const [currentStep, setCurrentStep] = useState("");
   const [processMessage, setProcessMessage] = useState("Click test button to begin");
@@ -18,7 +28,7 @@ const Settings = () => {
     balanceSent: false,
     proposalCreated: false,
     voteSubmitted: false,
-    superSigDeletionProposed: false,
+    supersigDeletionProposed: false,
     voteDeleteSubmitted: false
   });
   const [output, setOutput] = useState({
@@ -29,7 +39,7 @@ const Settings = () => {
     balanceSent: '',
     proposalCreated: '',
     voteSubmitted: '',
-    superSigDeletionProposed: '',
+    supersigDeletionProposed: '',
     voteDeleteSubmitted: '',
   });
   const [error, setError] = useState({
@@ -40,10 +50,12 @@ const Settings = () => {
     balanceSent: false,
     proposalCreated: false,
     voteSubmitted: false,
-    superSigDeletionProposed: false,
+    supersigDeletionProposed: false,
     voteDeleteSubmitted: false
   });
   
+ 
+
 
   const handleClick = async () => {
     if (!isApiReady) return;
@@ -52,149 +64,183 @@ const Settings = () => {
     let amount = 0; // Update this after sending balance
     let callId = 0; // Update this after submitting the call
 
-const checkChain = async (api: ApiPromise) => {
-  try {
-    // check the chain
-    const chain = await api.rpc.system.chain();
-    setStatus(prev => ({ ...prev, chainWorking: true }));
-  } catch (error) {
-    throw new Error("Unable to connect to the chain");
-  }
-}
-
-const checkPallet = async (api: ApiPromise) => {
-  try {
-    // check if the chain is working before proceeding
-    if (!status.chainWorking) {
-      throw new Error("Chain connection failed. Cannot proceed to check pallet");
-    }
-
-    const pallets = Object.keys(api.tx);
-    if (pallets.includes('supersig')) {
-      setStatus(prev => ({ ...prev, palletExists: true }));
-    } else {
-      throw new Error("Pallet 'supersig' does not exist");
-    }
-  } catch (error) {
-    throw new Error("An error occurred while checking for the pallet: " + error.message);
-  }
-}
-
-const checkRpcMethods = async (api: ApiPromise) => {
-  try {
-    // check if the chain and pallet checks were successful before proceeding
-    if (!status.chainWorking || !status.palletExists) {
-      throw new Error("Previous checks failed. Cannot proceed to check RPC methods");
-    }
-
-    if ((api.rpc as any).superSig) {
-      setStatus(prev => ({ ...prev, rpcMethodsExist: true }));
-    } else {
-      throw new Error("'superSig' RPC methods do not exist");
-    }
-  } catch (error) {
-    throw new Error("An error occurred while checking RPC methods: " + error.message);
-  }
-}
-
-      
-
-
-    const submitAndFinalize = async (tx: any, sender: any): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          tx.signAndSend(sender, ({ events = [], status }) => {
-            if (status.isInBlock) {
-              console.log('Included at block hash', status.asInBlock.toHex());
-            } else if (status.isFinalized) {
-              console.log('Finalized block hash', status.asFinalized.toHex());
-              resolve(status.asFinalized.toHex() as string);
-            }
-          }).catch((error: any) => {
-            reject(error);
-          });
-        });
-      }
-      
-    
-      
-      const createSupersig = async (api: ApiPromise) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                setCurrentStep("creating supersig");
-                const keyring = new Keyring({ type: 'sr25519' });
-                const alice = keyring.addFromUri('//Alice');
-                setProcessMessage('creating supersig...');
-                const encodedCallData = '0x2a0004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d00';
-                const tx = api.createType('Call', encodedCallData);
-                const extrinsic = api.tx(tx);
-    
-                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
-                    if (status.isInBlock) {
-                        console.log(`Included at blockHash ${status.asInBlock}`);
-                        events.forEach(({ phase, event: { data, method, section } }) => {
-                            console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-                            
-                            // Look for the SupersigCreated event and extract the SuperSig account ID
-                            if (section === 'supersig' && method === 'SupersigCreated') {
-                                const superSigAccount = data[0];
-                                console.log('SuperSig account:', superSigAccount.toString());
-                                setStatus(prev => ({ ...prev, supersigCreated: true }));
-                                setProcessMessage('SuperSig created. Waiting for next operation...');
-                                setOutput(prev => ({ ...prev, supersigCreated: 'SuperSig created with account ' + superSigAccount }));
-                                resolve(superSigAccount);
-                            }
-                        });
-                    }
-                    else if (status.isFinalized) {
-                        console.log(`Finalized at blockHash ${status.asFinalized}`);
-                    }
-                });
-            } catch (error) {
-                console.error('Error creating SuperSig:', error);
-                reject('Error creating SuperSig');
-            }
-        });
-    };
-    
-
-    const sendBalance = async (api: ApiPromise) => {
+    const checkChain = async (api: ApiPromise) => {
         try {
-            setCurrentStep("send balance from supersig");
+          setProcessMessage('Chain is is being checked');
 
-            const keyring = new Keyring({ type: 'sr25519' });
-            const alice = keyring.addFromUri('//Alice');
-            amount = 100000;
-            console.log(superSigAccount)
-            setProcessMessage('funding the supersig...');
-            // const txHash = await api.tx.balances.transfer(superSigAccount, amount).signAndSend(alice);
-            const txHash = await submitAndFinalize(api.tx.balances.transfer(superSigAccount, amount), alice);
-            console.log('Transfer hash:', txHash);
-            setStatus(prev => ({ ...prev, balanceSent: true }));
-            setOutput(prev => ({ ...prev, balanceSent: 'Sent ' + amount + ' balance to ' + superSigAccount }));
+            await api.rpc.system.chain();
+            setStatus(prev => ({ ...prev, chainWorking: true }));
+            setOutput(prev => ({ ...prev, chainWorking: 'Chain is working properly' }));
+            return true;
         } catch (error) {
-          console.error('Error sending balance:', error);
+            const errorAsError = error as Error;
+            setStatus(prev => ({ ...prev, chainWorking: false }));
+            setOutput(prev => ({ ...prev, chainWorking: 'Error connecting to the chain: ' + errorAsError.message }));
+            return false;
         }
     }
-      
-    const submitCall = async (api: ApiPromise) => {
-        try {
-            setCurrentStep("create supersig proposal");
     
+    const checkPallet = async (api: ApiPromise) => {
+        try {
+          setProcessMessage('Checking for supersig pallet');
+
+            const pallets = Object.keys(api.tx);
+            if (pallets.includes('supersig')) {
+                setStatus(prev => ({ ...prev, palletExists: true }));
+                setOutput(prev => ({ ...prev, palletExists: 'Pallet supersig exists' }));
+                return true;
+            } else {
+                throw new Error("Pallet 'supersig' does not exist");
+            }
+        } catch (error) {
+            const errorAsError = error as Error;
+            setStatus(prev => ({ ...prev, palletExists: false }));
+            setOutput(prev => ({ ...prev, palletExists: 'Error checking pallet: ' + errorAsError.message }));
+            return false;
+        }
+    }
+    
+    const checkRpcMethods = async (api: ApiPromise, chainWorking: boolean, palletExists: boolean) => {
+      try {
+        setProcessMessage('Checking for Rpc methods in the node');
+
+        // check if the chain and pallet checks were successful before proceeding
+        if (!chainWorking || !palletExists) {
+          throw new Error("Previous checks failed. Cannot proceed to check RPC methods");
+        }
+  
+        if ((api.rpc as any).superSig) {
+          setStatus(prev => ({ ...prev, rpcMethodsExist: true }));
+          setOutput(prev => ({ ...prev, rpcMethodsExist: 'supersig rpc methods exist'}))
+
+          // Next step is called here
+          const superSigAccount = await createSupersig(api, status)
+        } else {
+          throw new Error("'superSig' RPC methods do not exist");
+        }
+      } catch (error) {
+        const errorAsError = error as Error;
+        setStatus(prev => ({ ...prev, rpcMethodsExist: false }));
+        setOutput(prev => ({ ...prev, rpcMethodsExist: 'Error checking rpc methods: ' + errorAsError.message }));
+        throw new Error("An error occurred while checking RPC methods: " + errorAsError.message);
+      }
+    }
+    
+    const createSupersig = async (api: ApiPromise): Promise<string> => {
+      const keyring = new Keyring({ type: 'sr25519' });
+      const alice = keyring.addFromUri('//Alice');
+      const encodedCallData = '0x2a0004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d00';
+      const tx = api.createType('Call', encodedCallData);
+      const extrinsic = api.tx(tx);
+      let superSigAccount = "";
+
+      setStatus(prev => ({ ...prev, supersigCreated: false }));
+      setOutput(prev => ({ ...prev, supersigCreated: `creating supersig...`}))
+
+      extrinsic.signAndSend(alice, ({ events = [], status }) => {
+        setProcessMessage('Creating a supersig account with a member.');
+        console.log(`creating a supersig please wait...`);
+          if (status.isInBlock) {
+              events.forEach(({ event: { data, method, section } }) => {
+                  if (section === 'supersig' && method === 'SupersigCreated') {
+                      superSigAccount = data[0].toString();
+                      console.log(`SuperSigCreated with account ${superSigAccount}`);
+                  }
+              });
+          } else if (status.isFinalized) {
+            setStatus(prev => ({ ...prev, supersigCreated: true }));
+            setOutput(prev => ({ ...prev, supersigCreated: `A supersig was created: ${superSigAccount}`}))
+              console.log(`Finalized at blockHash ${status.asFinalized}`);
+              // Call sendBalance as soon as supersig is created
+              if (superSigAccount) {
+                sendBalance(api, superSigAccount);
+              }
+          }
+        }).catch((error: any) => {
+          const errorAsError = error as Error;
+          setStatus(prev => ({ ...prev, supersigCreated: false }));
+          setOutput(prev => ({ ...prev, supersigCreated: `A supersig was created: ${superSigAccount}` + errorAsError.message}))
+          console.error('Error creating SuperSig:', error);
+
+        });
+    };
+      
+    const submitAndFinalize = async (tx: any, sender: any): Promise<string> => {
+    
+      return new Promise((resolve, reject) => {
+        tx.signAndSend(sender, ({ events = [], status }) => {
+          if (status.isInBlock) {
+            console.log('Included at block hash', status.asInBlock.toHex());
+            setOutput(prev => ({ ...prev, transaction: 'Transaction included at block hash ' + status.asInBlock.toHex() }));
+          } else if (status.isFinalized) {
+            console.log('Finalized block hash', status.asFinalized.toHex());
+            setOutput(prev => ({ ...prev, transaction: 'Transaction finalized at block hash ' + status.asFinalized.toHex() }));
+            resolve(status.asFinalized.toHex() as string);
+          }
+        }).catch((error: any) => {
+          reject(error);
+        });
+      });
+    }
+    
+      const sendBalance = async (api: ApiPromise, superSigAccount: string): Promise<void> => {
+        setOutput(prev => ({ ...prev, balanceSent: `About to send balance of ${amount}`}))
+
+          const keyring = new Keyring({ type: 'sr25519' });
+          const alice = keyring.addFromUri('//Alice');
+          const amount = 111000000000000;
+          // const supersigAccuntId = new keyring.
+      
+          try {
+              setProcessMessage(`Funding the supersig ${superSigAccount} with 100000 units`);
+
+              // execute the transaction
+              const txHash = await submitAndFinalize(api.tx.balances.transfer(superSigAccount, amount), alice);
+
+              console.log('Transfer hash:', txHash);
+              setStatus(prev => ({ ...prev, balanceSent: true }));
+              setOutput(prev => ({ ...prev, balanceSent: `The supersig was funded by Alice: ${superSigAccount} with ${amount}`}))
+
+          
+              await createProposal(api, superSigAccount);
+
+          } catch (error) {
+            const errorAsError = error as Error;
+            setStatus(prev => ({ ...prev, balanceSent: false }));
+            setOutput(prev => ({ ...prev, balanceSent: `Supersig account was not funded successfully (try again or debug)` + errorAsError.message}))
+              console.error('Error sending balance:', error);
+          } 
+      };
+    
+      const createProposal = async (api: ApiPromise, superSigAccount: string) => {
+        setOutput(prev => ({ ...prev, balance: `Creating a proposal to send funds from the supersig to Dave.`}))
+        try {
+            setProcessMessage('Alice proposes to send funds from the supersig to Dave');
+            setCurrentStep("create supersig proposal");
+
             const keyring = new Keyring({ type: 'sr25519' });
             const alice = keyring.addFromUri('//Alice');
             const dave = keyring.addFromUri('//Dave');
-    
-            setProcessMessage('Alice is making a proposal to send funds to the supersig from Dave...');
-            
+            const sendBalance = 111000000000000;
+                
             // Create an AccountId instance for Dave's address
             const daveAccountId = api.createType('AccountId', dave.address);
-    
-            const unsub = await api.tx.supersig.submitCall(superSigAccount, api.tx.balances.transfer(daveAccountId, api.consts.balances.existentialDeposit))
-                .signAndSend(alice, ({ status, events }) => {
+            console.log(`this is the supersig about to be proposed ${superSigAccount}`);
+
+            const unsub = await api.tx.supersig.submitCall(superSigAccount, api.tx.balances.transfer(daveAccountId, sendBalance))
+              .signAndSend(alice, ({ status, events }) => {
+
                     if (status.isInBlock) {
+                        console.log(`here we are in blocksville...}`);
+                        setOutput(prev => ({ ...prev, proposalCreated: `The proposal is now in the block...`}))
+
                         console.log(`Transaction included at blockHash ${status.asInBlock}`);
+                        console.log('Included events:', events);
+                        setProcessMessage('Proposal is now in the block...');
+
                     } else if (status.isFinalized) {
                         console.log(`Transaction finalized at blockHash ${status.asFinalized}`);
+                        console.log('Finalized events:', events);
                         events.forEach(({ event: { data, method, section }, phase }) => {
                             if (section === 'supersig' && method === 'CallSubmitted') {
                                 console.log('Event data:', data.toJSON()); // Log the entire event data
@@ -204,73 +250,93 @@ const checkRpcMethods = async (api: ApiPromise) => {
                                 setProcessMessage('Proposal created. Waiting for next operation...');
                                 setOutput(prev => ({ ...prev, proposalCreated: 'Created proposal with ID ' + callId }));
                                 unsub(); // Unsubscribe from the transaction updates
+
+                                approveCall(api, superSigAccount);
                             }
                         });
                     }
                 });
         } catch (error) {
+          const errorAsError = error as Error;
+          setStatus(prev => ({ ...prev, proposalCreated: false }));
+          setOutput(prev => ({ ...prev, proposalCreated: `Proposal was not successfully created)` + errorAsError.message}))
+          
             console.error('Error submitting call:', error);
         }
-    }
+      }
     
-      
     
-    const approveCall = async (api: ApiPromise) => {
-        try {
-
-            setCurrentStep("approving supersig proposal");
-
-            const keyring = new Keyring({ type: 'sr25519' });
-            const alice = keyring.addFromUri('//Alice');
-    
-            setProcessMessage('Alice votes to approve the proposal...');
-            const txHash = await submitAndFinalize(api.tx.supersig.approveCall(superSigAccount, callId), alice);
-        
-            console.log('Approve call hash:', txHash);
-            setStatus(prev => ({ ...prev, voteSubmitted: true }));
-            setProcessMessage('Proposal Approved. Waiting for next operation...');
-            setOutput(prev => ({ ...prev, voteSubmitted: 'Approved call with ID ' + callId }));
-        } catch (error) {
-          console.error('Error approving call:', error);
-        }
-    }
-    
-    const proposeDeleteSupersig = async (api: ApiPromise) => {
+      const proposeDeleteSupersig = async (api: ApiPromise, superSigAccount: string) => {
         try {
           setCurrentStep("create supersig proposal");
-      
+          setProcessMessage('Alice is making a proposal to delete the supersig...');
+          setOutput(prev => ({ ...prev, supersigDeletionProposed: 'Now we are proposing to delete the supersig because we like to keep our room tidy.' }));
+
           const keyring = new Keyring({ type: 'sr25519' });
           const alice = keyring.addFromUri('//Alice');
-      
-          setProcessMessage('Alice is making a proposal to delete the supersig...');
-          
-          const unsub = await api.tx.supersig.submitCall(alice, api.tx.supersig.deleteSupersig(superSigAccount))
+          const aliceAccountId = api.createType('AccountId', alice.address);
+
+          const unsub = await api.tx.supersig.submitCall(superSigAccount, api.tx.supersig.deleteSupersig(aliceAccountId))
           .signAndSend(alice, ({ status, events }) => {
               if (status.isInBlock) {
+                setOutput(prev => ({ ...prev, supersigDeletionProposed: `The proposal is now in the block...`}))
                 console.log(`Transaction included at blockHash ${status.asInBlock}`);
               } else if (status.isFinalized) {
                 console.log(`Transaction finalized at blockHash ${status.asFinalized}`);
                 events.forEach(({ event: { data, method, section }, phase }) => {
                   if (section === 'supersig' && method === 'CallSubmitted') {
                     console.log('Event data:', data.toJSON()); // Log the entire event data
-                    callId = data[0].toHuman(); // Assuming the callId is the first argument of the event
+                    const callId = data[0].toHuman(); // Assuming the callId is the first argument of the event
                     console.log(`CallId from CallSubmitted event: ${callId}`);
-                    setStatus(prev => ({ ...prev, supersigDeletionProposed: true }));
                     setProcessMessage('Proposal created. Waiting for next operation...');
+                    setStatus(prev => ({ ...prev, supersigDeletionProposed: true }));
                     setOutput(prev => ({ ...prev, supersigDeletionProposed: 'Created proposal with ID ' + callId }));
                     unsub(); // Unsubscribe from the transaction updates
+                    approveDeleteSupersig(api, superSigAccount);
                   }
                 });
               }
             });
         } catch (error) {
+          const errorAsError = error as Error;
+          setStatus(prev => ({ ...prev, supersigDeletionProposed: false }));
+          setOutput(prev => ({ ...prev, supersigDeletionProposed: `Proposal was not successfully created)` + errorAsError.message}))
           console.error('Error submitting call:', error);
         }
       }
 
-
-      const approveDeleteSupersig = async (api: ApiPromise) => {
+      const approveCall = async (api: ApiPromise, superSigAccount: string) => {
+        setProcessMessage('Alice is about to approvs the proposal.');
+        setCurrentStep("create supersig proposal");
+        setOutput(prev => ({ ...prev, voteSubmitted: `Approving proposal...`}))
         try {
+            setCurrentStep("approving supersig proposal");
+
+            const keyring = new Keyring({ type: 'sr25519' });
+            const alice = keyring.addFromUri('//Alice');
+    
+            setProcessMessage('Alice votes to approve the proposal...');
+
+            const txHash = await submitAndFinalize(api.tx.supersig.approveCall(superSigAccount, callId), alice);
+        
+            console.log('Approve call hash:', txHash);
+            setStatus(prev => ({ ...prev, voteSubmitted: true }));
+            setProcessMessage('Proposal Approved. Waiting for next operation...');
+            setOutput(prev => ({ ...prev, voteSubmitted: 'Approved call with ID ' + callId }));
+            proposeDeleteSupersig(api, superSigAccount)
+
+        } catch (error) {
+          const errorAsError = error as Error;
+          setStatus(prev => ({ ...prev, voteSubmitted: false }));
+          setOutput(prev => ({ ...prev, voteSubmitted: `There was an issue approving the proposal...` + errorAsError.message}))
+          console.error('Error approving call:', error);
+        }
+      }
+
+      const approveDeleteSupersig = async (api: ApiPromise, superSigAccount: string) => {
+        try {
+            setProcessMessage('Abuot to approve the propose to delete the supersig...');
+            setOutput(prev => ({ ...prev, voteDeleteSubmitted: 'About to approve the deletion.' + callId }));
 
             setCurrentStep("approving supersig proposal");
 
@@ -279,7 +345,7 @@ const checkRpcMethods = async (api: ApiPromise) => {
     
             setProcessMessage('Alice votes to approve the proposal to delete the supersig...');
             const txHash = await submitAndFinalize(api.tx.supersig.approveCall(superSigAccount, callId), alice);
-        
+
             console.log('Approve call hash:', txHash);
             setStatus(prev => ({ ...prev, voteDeleteSubmitted: true }));
             setProcessMessage('Proposal Approved. Waiting for next operation...');
@@ -287,64 +353,48 @@ const checkRpcMethods = async (api: ApiPromise) => {
         } catch (error) {
           console.error('Error approving call:', error);
         }
-    }
+      }
 
-    const deleteSupersig = async (api: ApiPromise) => {
-        try {
-            setCurrentStep("deleting supersig");
-    
-            const keyring = new Keyring({ type: 'sr25519' });
-            const alice = keyring.addFromUri('//Alice');
-    
-            setProcessMessage('Alice submits a call to delete the supersig...');
-    
-            const txHash = await submitAndFinalize(api.tx.supersig.submitCall(superSigAccount, api.tx.supersig.deleteSupersig(superSigAccount)), alice
-            );
-        
-            console.log('Delete SuperSig hash:', txHash);
-            setStatus(prev => ({ ...prev, superSigDelet: true }));
-            setProcessMessage('Supersig deleted. Process Completed!');
-            setOutput(prev => ({ ...prev, superSigDeleted: 'Deleted SuperSig with account ' + superSigAccount }));
-        } catch (error) {
-          console.error('Error deleting SuperSig:', error);
-        }
+    try {
+        const chainWorking = await checkChain(api);
+        const palletExists = await checkPallet(api);
+        await checkRpcMethods(api, chainWorking, palletExists);
+    } catch (error) {
+        console.error('An error occurred:', error);
+        setStatus(prev => ({ ...prev, errorMessage: 'An error occurred: ' + error.message }));
+        setOutput(prev => ({ ...prev, errorMessage: 'An error occurred: ' + error.message }));
     }
-    
-    
-      
-    await checkChain();
-    await checkPallet(api);
-    await checkRpcMethods(api);
-    await createSupersig(api);
-    await sendBalance(api);
-    await submitCall(api);
-    await approveCall(api);
-    await proposeDeleteSupersig(api);
-    await approveDeleteSupersig(api);
-
   }
 
   return (
     <div>
       <h1>Supersig Workflow Tester</h1>
+      <p>
+      Quickly test endpoints to run a e2e workflow test which makes sure all the parts of the supersig user journey work as expected. Open the console to see the output of the tests.
+      </p>
       <label>
         Endpoint:
-        <input type="text" value={endpoint} onChange={e => setEndpoint(e.target.value)} />
+        <input type="text" style={{margin: "5px" ,padding:"5px", border: "sollid 1px gray", borderRadius: "4px", minWidth: "160px" }}value={endpoint} onChange={e => setEndpoint(e.target.value)} />
       </label>
-      <Button onClick={handleClick}>Test</Button>
-      <h5> Current Status... {processMessage}</h5>
+     
+      <button onClick={handleClick} style={{margin: "5px", backgroundColor: "#000", color: "#FFFFFF", border: "none", padding: "8px 15px 8px 15px", borderRadius: "4px", cursor: "pointer"}}>
+      Test
+      </button>
+     
+      <h5> Current Status:</h5> 
+      <h3>{processMessage}</h3>
       {/* Display the status of each step */}
       {Object.entries(status).map(([key, value]) => (
-        <div key={key}>
-          <div> {value ? '🟢' : '⚪️'} {key.charAt(0).toUpperCase() + key.slice(1)}  {/* Title case the key */}
-         
-          <p>{output[key as keyof typeof output]}</p>
-         
-          </div>
-        </div>
-      ))}
+            <div key={key}>
+                {error[key as keyof typeof error] ? '🔴' :
+                value ? '🟢' : '⚪️'} {key.charAt(0).toUpperCase() + key.slice(1)}
+                <p style={{fontStyle: "italic"}}>{output[key as keyof typeof output]}</p>
+            </div>
+    ))}
+
     </div>
   );
+
 }
 
 export default Settings;

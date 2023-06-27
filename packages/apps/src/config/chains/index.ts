@@ -9,17 +9,16 @@ export const chains: Chain[] = [
   {
     decimals: 12,
     definitions: soupcanDefinitions,
-    name: 'Soupcan',
+    name: 'Soupcan 🥫',
     rpcEndpoints: [
       'wss://soupcan1.jelliedowl.com',
-      'wss://soupcan2.jelliedowl.com'
     ],
     ss58Format: 27
   },
   {
     decimals: 12,
     definitions: kabochaDefinitions,
-    name: 'Kabocha',
+    name: 'Kabocha 🎃',
     rpcEndpoints: [
       'wss://kabocha.jelliedowl.com'
     ],
@@ -28,10 +27,9 @@ export const chains: Chain[] = [
   {
     decimals: 12,
     definitions: statemineDefinitions,
-    name: 'Statemine',
+    name: 'Statemind 🧠',
     rpcEndpoints: [
-      'wss://statemine.api.onfinality.io/public-ws',
-      'wss://rpc-statemine.luckyfriday.io'
+      'wss://statemind.jelliedowl.com',
     ],
     ss58Format: 2
   }

@@ -17,21 +17,31 @@ import { Summary } from './Summary.js';
 
 const sxs = {
   button: {
-    border: '1px solid rgb(221, 221, 221)',
-    borderRadius: 8,
-    color: 'rgb(24, 24, 24)'
+    backgroundColor: '#fff', 
+    color: '#000',
+    borderColor: '#000',
+    marginRight: '10px',
+    fontFamily: 'Avenir, sans-serif',
+    textTransform: 'none', // no uppercase
+    '&:hover': {
+      color: '#fff', 
+      borderColor: '#fff', 
+      backgroundColor: '#000'
+    }
   },
   buttonGroup: {
     display: 'flex',
-    gap: 2
+    padding: '10px'
   },
   dashboard: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 3,
-    padding: 4
+    gap: 3, 
+    padding: 5
   }
 };
+
+
 
 export const Dashboard = () => {
   const { api, chainSS58, isApiReady, tokenDecimals: decimals } = useApi();

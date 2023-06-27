@@ -32,7 +32,7 @@ export const Sidebar = () => {
             />
           </ListItemIcon>
           <ListItemText primary='Supersig' />
-          {open ? '+' : '-'}
+          {open ? '-' : '+'}
         </ListItemButton>
         <Collapse
           in={open}
