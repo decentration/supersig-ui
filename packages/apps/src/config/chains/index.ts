@@ -32,7 +32,17 @@ export const chains: Chain[] = [
       'wss://statemind.jelliedowl.com',
     ],
     ss58Format: 2
+  },
+  {
+    decimals: 12,
+    definitions: statemineDefinitions,
+    name: 'Development',
+    rpcEndpoints: [
+      'ws://127.0.0.1:9944',
+    ],
+    ss58Format: 42
   }
+
   // Add more chains if needed
 ];
 
