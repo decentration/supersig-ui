@@ -7,6 +7,16 @@ import { kabochaDefinitions, soupcanDefinitions, statemineDefinitions } from './
 
 export const chains: Chain[] = [
   {
+    decimals: 42,
+    definitions: soupcanDefinitions,
+    name: 'Development',
+    rpcEndpoints: [
+      'ws://127.0.0.1:9944',
+     
+    ],
+    ss58Format: 27
+  },
+  {
     decimals: 12,
     definitions: soupcanDefinitions,
     name: 'Soupcan',

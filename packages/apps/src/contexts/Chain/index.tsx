@@ -22,7 +22,7 @@ interface ChainProviderProps {
 
 const ChainContext = createContext<ChainContextProps>({
   activeChain: defaultChain,
-  activeRpc: 'wss://soupcan1.jelliedowl.com',
+  activeRpc: 'ws://127.0.0.1:9944',
   setActiveChain: () => {
     /** set selected chain */
   },
