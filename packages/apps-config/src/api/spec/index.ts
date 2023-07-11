@@ -286,6 +286,7 @@ const spec: Record<string, OverrideBundleDefinition> = {
   subspace,
   'substrate-contracts-node': substrateContractsNode,
   subzero: zero,
+  'supersig-template': supersigTemplate,
   swapdex,
   t0rn,
   ternoa,
