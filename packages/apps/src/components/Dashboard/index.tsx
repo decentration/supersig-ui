@@ -123,7 +123,7 @@ export const Dashboard = () => {
     init();
   }, [api, supersigAccounts]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!api || !isApiReady) {
       return;
     }
@@ -142,8 +142,8 @@ useEffect(() => {
           if (members.length > 0) {
             addressArray.push(account.address);
           }
-        } catch (_err) {
-          /** An error occured */
+        } catch (err) {
+          console.error(err);
         }
       }
 
@@ -152,7 +152,7 @@ useEffect(() => {
 
     getSuperSigAddress();
   }, [api, isApiReady, nonce, chainSS58]);
-  
+
   return (
     <>
       <Box sx={{ ...sxs.dashboard }}>
