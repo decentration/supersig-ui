@@ -1,3 +1,4 @@
+ 
 # Supersig UI
 
 Supersig UI is an open source project that creates simple experiences for interacting with organisations using the supersig pallet and rpc module. 
@@ -127,6 +128,8 @@ docker build -t jacogr/polkadot-js-apps -f docker/Dockerfile .
 
 When using these Docker commands, you can access the UI via http://localhost:80 (or just http://localhost)
 
+Thanks to Jaco from [Polkadot-js](https://github.com/polkadot-js/) for using some of their components in the building of this project.
+
 ## IPFS
 
 IPFS allows sharing files in a decentralized manner in a similar fashion the polkadot network exchanges blocks. IPFS works best when many nodes seed the same data. Nodes can seed specific data by **pinning** them.
@@ -223,3 +226,4 @@ The accounts are stored in the following directories:
 * Windows: `%APPDATA%\polkadot-apps\polkadot-accounts`
 
 For more details on the desktop app, head over to [Electron package README](https://github.com/polkadot-js/apps/blob/master/packages/apps-electron/README.md).
+
