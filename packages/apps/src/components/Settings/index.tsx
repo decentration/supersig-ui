@@ -110,6 +110,9 @@ const Settings = () => {
         }
   
         if ((api.rpc as any).superSig) {
+          const metadata = await api.rpc.state.getMetadata()
+          console.log(JSON.stringify(metadata.toHuman(), null, 2));
+          console.log(Object.keys(api.rpc));
           setStatus(prev => ({ ...prev, rpcMethodsExist: true }));
           setOutput(prev => ({ ...prev, rpcMethodsExist: 'supersig rpc methods exist'}))
 
@@ -126,17 +129,90 @@ const Settings = () => {
       }
     }
     
+    // const createSupersig = async (api: ApiPromise): Promise<string> => {
+    //   const keyring = new Keyring({ type: 'sr25519' });
+    //   const alice = keyring.addFromUri('//Alice');
+    //   const encodedCallData = '0x2a0004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d00';
+    //   const tx = api.createType('Call', encodedCallData);
+    //   const extrinsic = api.tx(tx);
+    //   let superSigAccount = "";
+
+    //   setStatus(prev => ({ ...prev, supersigCreated: false }));
+    //   setOutput(prev => ({ ...prev, supersigCreated: `creating supersig...`}))
+
+    //   extrinsic.signAndSend(alice, ({ events = [], status }) => {
+    //     setProcessMessage('Creating a supersig account with a member.');
+    //     console.log(`creating a supersig please wait...`);
+    //       if (status.isInBlock) {
+    //           events.forEach(({ event: { data, method, section } }) => {
+    //               if (section === 'supersig' && method === 'SupersigCreated') {
+    //                   superSigAccount = data[0].toString();
+    //                   console.log(`SuperSigCreated with account ${superSigAccount}`);
+    //               }
+    //           });
+    //       } else if (status.isFinalized) {
+    //         setStatus(prev => ({ ...prev, supersigCreated: true }));
+    //         setOutput(prev => ({ ...prev, supersigCreated: `A supersig was created: ${superSigAccount}`}))
+    //           console.log(`Finalized at blockHash ${status.asFinalized}`);
+    //           // Call sendBalance as soon as supersig is created
+    //           if (superSigAccount) {
+    //             sendBalance(api, superSigAccount);
+    //           }
+    //       }
+    //     }).catch((error: any) => {
+    //       const errorAsError = error as Error;
+    //       setStatus(prev => ({ ...prev, supersigCreated: false }));
+    //       setOutput(prev => ({ ...prev, supersigCreated: `A supersig was created: ${superSigAccount}` + errorAsError.message}))
+    //       console.error('Error creating SuperSig:', error);
+
+    //     });
+    // };
+
+    // const createSupersig = async (api: ApiPromise): Promise<string> => {
+    //   try {
+    //     setProcessMessage('Creating a new SuperSig...');
+    //     setOutput(prev => ({ ...prev, supersigCreated: 'Creating a new SuperSig...' }));
+    
+    //     setCurrentStep("Creating SuperSig");
+    
+    //     const keyring = new Keyring({ type: 'sr25519' });
+    //     const alice = keyring.addFromUri('//Alice');
+    
+    //     // Hardcoded member tuple with Alice as the only member and role as "Standard"
+    //     const memberTuples = [[alice.address, "Standard"]];
+    
+    //     setProcessMessage('Alice is attempting to create a new SuperSig...');
+    //     const txHash = await submitAndFinalize(api.tx.supersig.createSupersig(memberTuples), alice);
+    
+    //     console.log('Create SuperSig hash:', txHash);
+    //     setStatus(prev => ({ ...prev, supersigCreated: true }));
+    //     setProcessMessage('SuperSig Created. Proceeding to next test...');
+    //     setOutput(prev => ({ ...prev, supersigCreated: 'Created SuperSig with hash ' + txHash }));
+    
+    //     // return the transaction hash for further actions or checks
+    //     return txHash;
+    //   } catch (error) {
+    //     console.error('Error creating SuperSig:', error);
+    //     setStatus(prev => ({ ...prev, supersigCreated: false }));
+    //     setOutput(prev => ({ ...prev, supersigCreated: 'Error creating SuperSig: ' + error.message }));
+    //     throw new Error('Error creating SuperSig: ' + error.message);
+    //   }
+    // };
+
     const createSupersig = async (api: ApiPromise): Promise<string> => {
       const keyring = new Keyring({ type: 'sr25519' });
       const alice = keyring.addFromUri('//Alice');
-      const encodedCallData = '0x2a0004d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d00';
-      const tx = api.createType('Call', encodedCallData);
-      const extrinsic = api.tx(tx);
+    
+      // Hardcoded member tuple with Alice as the only member and role as "Standard"
+      const memberTuples = [[alice.address, "Standard"]];
+    
+      // Creating the transaction
+      const extrinsic = api.tx.supersig.createSupersig(memberTuples);
       let superSigAccount = "";
-
+    
       setStatus(prev => ({ ...prev, supersigCreated: false }));
       setOutput(prev => ({ ...prev, supersigCreated: `creating supersig...`}))
-
+    
       extrinsic.signAndSend(alice, ({ events = [], status }) => {
         setProcessMessage('Creating a supersig account with a member.');
         console.log(`creating a supersig please wait...`);
@@ -161,9 +237,10 @@ const Settings = () => {
           setStatus(prev => ({ ...prev, supersigCreated: false }));
           setOutput(prev => ({ ...prev, supersigCreated: `A supersig was created: ${superSigAccount}` + errorAsError.message}))
           console.error('Error creating SuperSig:', error);
-
+    
         });
     };
+    
       
     const submitAndFinalize = async (tx: any, sender: any): Promise<string> => {
     
@@ -348,7 +425,7 @@ const Settings = () => {
 
             console.log('Approve call hash:', txHash);
             setStatus(prev => ({ ...prev, voteDeleteSubmitted: true }));
-            setProcessMessage('Proposal Approved. Waiting for next operation...');
+            setProcessMessage('Proposal Approved. Testing Complete.');
             setOutput(prev => ({ ...prev, voteDeleteSubmitted: 'Approved call with ID ' + callId }));
         } catch (error) {
           console.error('Error approving call:', error);
@@ -372,13 +449,13 @@ const Settings = () => {
       <p>
       Quickly test endpoints to run a e2e workflow test which makes sure all the parts of the supersig user journey work as expected. Open the console to see the output of the tests.
       </p>
-      <label>
+      {/* <label>
         Endpoint:
         <input type="text" style={{margin: "5px" ,padding:"5px", border: "sollid 1px gray", borderRadius: "4px", minWidth: "160px" }}value={endpoint} onChange={e => setEndpoint(e.target.value)} />
-      </label>
+      </label> */}
      
       <button onClick={handleClick} style={{margin: "5px", backgroundColor: "#000", color: "#FFFFFF", border: "none", padding: "8px 15px 8px 15px", borderRadius: "4px", cursor: "pointer"}}>
-      Test
+      Test Supersig
       </button>
      
       <h5> Current Status:</h5> 

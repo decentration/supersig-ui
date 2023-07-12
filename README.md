@@ -1,10 +1,91 @@
-# @polkadot/apps
+# Supersig UI
+
+Supersig UI is an open source project that creates simple experiences for interacting with organisations using the supersig pallet and rpc module. 
+
+We’ve created a simple open source UI which enables users to manage their supersig(s) easily, along with an Address book, and Accounts to show your balances connected to your Polkadot Extension.
+
+## Setup Supersig UI on local machine
+
+```
+git clone https://github.com/decentration/supersig-ui.git
+yarn 
+yarn start
+Now it should be available on port 3000, or if that is busy, a different port will be selected.
+```
+
+Et Voila! you can interact with supersig on the provided chain in the chain selector.
+
+If you want you can add a substrate-node-template containing the supersig pallet and rpc module to your local machine:
+
+## Setup Supersig Node Template
+
+```
+git clone https://github.com/decentration/substrate-supersig-template
+git checkout v0.9.37-fix-unbounded
+cargo update
+cargo build --release
+./target/release/node-template --dev
+```
+
+## Test Supersig Workflow
+Test the workflow of your chain containing Supersig features.
+
+To swiftly test and debug your chain containing Supersig go to Settings and click Test Supersig.
+
+
+**Supersig Workflow Tester**
+This will run through a workflow of tests, checking:
+
+if the chain is working,
+- then if the supersig pallet is in the chain,
+- then if the Rpc methods are correctly showing,
+- then it will create a supersig org with Alice as a member,
+-then it will send a balance to that supersig,
+- then it will create a proposal to send some balance to Dave,
+- then the member (Alice) will approve the proposal.
+- Then Alice will propose to delete the supersig,
+- then Alice will approve that, and then the workflow is complete.
+- If the test completes you can be sure your chain, the supersig, and its - interaction with the UI will be working sufficiently. If it does not complete you can check the errors and debug your setup until it works.
+
+
+## Permanently add your own chain to the Chain Selector (optional)
+1. Add your chain definitions in `./packages/apps/config/chains/specs/index.ts` add your chain definitions, and then add your chain definitions .ts file.
+2. Also add the chain definitions in: `./packages/apps-config/src/api/spec/index`, and add the chain definitions file as well.
+3. Add the types to the `./packages/apps-config/src/api/spec/typesBundle.ts` either by runnign yarn build:typesBundle or if you face issues, you can manually insert the types into the typesBundle.ts file.
+
+_Note: make sure that the name you use in the spec matches the name of the chain, else it will not work, and you will not have an error_
+
+
+## Docker 
+
+Run this container:
+
+```
+docker run --rm -it --name supersig-ui -p 3000:3000  decentration/supersig-ui:latest
+```
+
+If you want to make local changes then you can run:
+
+```
+docker build -t decentration/supersig-ui:latest -f docker/Dockerfile .
+```
+
+To push to your docker public library:
+
+```
+
+```
+
+
+To interact with your local node, you can select Development in the Chain Selector, if you are using ws://127.0.0.1:9944, else you can create a Custom port.
 
 A Portal into the Polkadot and Substrate networks. Provides a view and interaction layer from a browser.
 
 This can be accessed as a hosted application via https://polkadot.js.org/apps/ or you can access the IPFS hosted version via https://polkadot.js.org/apps/ipfs (via hash) or https://dotapps.io (via ipns) to explore any of the supported Polkadot and Substrate chains.
 
 If you run one or more IPFS node(s), pinning the UI (which only gets updated on releases) will make it faster for you and others. You can find details about that below in the IPFS chapter below.
+
+
 
 **Important** If you are a chain developer and would like to add support for your chain to the UI, all the local configuration (API types, settings, logos) can be customized in [the apps-config package](packages/apps-config#README.md), complete with instructions of what goes where.
 

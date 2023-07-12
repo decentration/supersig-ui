@@ -14,23 +14,27 @@ RUN npm install yarn -g
 WORKDIR /apps
 COPY . .
 
-RUN yarn && NODE_ENV=production yarn build:www
+RUN yarn 
 
-# ===========================================================
-FROM nginx:stable-alpine
+EXPOSE 3000
 
-# The following is mainly for doc purpose to show which ENV is supported
-ENV WS_URL=
+CMD ["yarn", "start"]
 
-WORKDIR /usr/share/nginx/html
+# # ===========================================================
+# FROM nginx:stable-alpine
 
-COPY docker/env.sh .
+# # The following is mainly for doc purpose to show which ENV is supported
+# ENV WS_URL=
 
-RUN apk add --no-cache bash; chmod +x env.sh
+# WORKDIR /usr/share/nginx/html
 
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /apps/packages/apps/build /usr/share/nginx/html
+# COPY docker/env.sh .
 
-EXPOSE 80
+# RUN apk add --no-cache bash; chmod +x env.sh
 
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
+# COPY docker/nginx.conf /etc/nginx/nginx.conf
+# COPY --from=builder /apps/packages/apps/build /usr/share/nginx/html
+
+# EXPOSE 80
+
+# CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
