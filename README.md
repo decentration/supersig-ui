@@ -73,7 +73,7 @@ docker build -t decentration/supersig-ui:latest -f docker/Dockerfile .
 To push to your docker public library:
 
 ```
-
+docker push decentration/supersig-ui:latest  # or replace "decentration" with your own docker username.        
 ```
 
 
