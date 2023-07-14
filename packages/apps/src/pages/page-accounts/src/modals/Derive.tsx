@@ -14,10 +14,10 @@ import { keyring } from '@polkadot/ui-keyring';
 import { nextTick } from '@polkadot/util';
 import { keyExtractPath } from '@polkadot/util-crypto';
 
-import { useTranslation } from '../translate.ts';
-import { tryCreateAccount } from '../util.tsx';
-import CreateAccountInputs from './CreateAccountInputs.tsx';
-import CreateConfirmation from './CreateConfirmation.tsx';
+import { useTranslation } from '../translate.js';
+import { tryCreateAccount } from '../util.js';
+import CreateAccountInputs from './CreateAccountInputs.js';
+import CreateConfirmation from './CreateConfirmation.js';
 
 interface Props {
   className?: string;

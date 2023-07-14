@@ -4,7 +4,7 @@
 import type { ActionStatus } from '@polkadot/react-components/Status/types';
 import type { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { AccountBalance, SortedAccount } from './types.ts';
+import type { AccountBalance, SortedAccount } from './types.js';
 
 import FileSaver from 'file-saver';
 import React from 'react';

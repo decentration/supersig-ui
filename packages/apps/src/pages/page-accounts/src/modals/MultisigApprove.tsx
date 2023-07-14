@@ -12,7 +12,7 @@ import { useAccounts, useApi, useWeight } from '@polkadot/react-hooks';
 import { Call as CallDisplay } from '@polkadot/react-params';
 import { assert, isHex } from '@polkadot/util';
 
-import { useTranslation } from '../translate.ts';
+import { useTranslation } from '../translate.js';
 
 interface Props {
   address: string;

@@ -3,7 +3,7 @@
 
 import type { ActionStatus } from '@polkadot/react-components/Status/types';
 import type { HexString } from '@polkadot/util/types';
-import type { ModalProps } from '../types.ts';
+import type { ModalProps } from '../types.js';
 
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -11,8 +11,8 @@ import { AddressRow, Button, Input, InputAddress, MarkWarning, Modal, QrScanAddr
 import { useApi, useIpfs } from '@polkadot/react-hooks';
 import { keyring } from '@polkadot/ui-keyring';
 
-import { useTranslation } from '../translate.ts';
-import PasswordInput from './PasswordInput.tsx';
+import { useTranslation } from '../translate.js';
+import PasswordInput from './PasswordInput.js';
 
 interface Scanned {
   content: string;

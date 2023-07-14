@@ -6,8 +6,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { selectableNetworks } from '@polkadot/networks';
 import { Dropdown, MarkError, Modal } from '@polkadot/react-components';
 
-import { useTranslation } from '../translate.ts';
-import { AVAIL_INDEXES } from './Ledger.tsx';
+import { useTranslation } from '../translate.js';
+import { AVAIL_INDEXES } from './Ledger.js';
 
 interface Props {
   className?: string;

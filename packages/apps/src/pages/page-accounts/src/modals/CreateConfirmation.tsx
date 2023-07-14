@@ -8,7 +8,7 @@ import React from 'react';
 import { AddressRow, Modal, Static } from '@polkadot/react-components';
 import { isHex } from '@polkadot/util';
 
-import { useTranslation } from '../translate.ts';
+import { useTranslation } from '../translate.js';
 
 interface Props {
   address?: string;

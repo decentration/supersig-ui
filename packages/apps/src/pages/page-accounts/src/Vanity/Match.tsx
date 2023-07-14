@@ -6,7 +6,7 @@ import React, { useCallback, useMemo } from 'react';
 import { Button, IdentityIcon, styled } from '@polkadot/react-components';
 import { u8aToHex } from '@polkadot/util';
 
-import { useTranslation } from '../translate.ts';
+import { useTranslation } from '../translate.js';
 
 interface Props {
   address: string;

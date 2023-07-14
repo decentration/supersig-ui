@@ -1,6 +1,7 @@
 // Copyright 2017-2023 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { ActionStatus } from '@polkadot/react-components/Status/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { GeneratorMatch, GeneratorMatches, GeneratorResult } from '@polkadot/vanitygen/types';
@@ -15,9 +16,9 @@ import generator from '@polkadot/vanitygen/generator';
 import matchRegex from '@polkadot/vanitygen/regex';
 import generatorSort from '@polkadot/vanitygen/sort';
 
-import CreateModal from '../modals/Create.tsx';
-import { useTranslation } from '../translate.ts';
-import Match from './Match.tsx';
+import CreateModal from '../modals/Create.js';
+import { useTranslation } from '../translate.js';
+import Match from './Match.js';
 
 interface Props {
   className?: string;

@@ -3,7 +3,7 @@
 
 import './Sidebar.css';
 
-import { faCode, faCog, faFileAlt, faPlus, faUsers, faWallet, faAddressBook } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faCode, faCog, faFileAlt, faPlus, faUsers, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import React, { useState } from 'react';
@@ -134,7 +134,7 @@ export const Sidebar = () => {
         >
           <ListItemIcon>
             <FontAwesomeIcon
-              icon={faAddressBook} 
+              icon={faAddressBook}
               style={{ marginRight: '5px' }}
             />
           </ListItemIcon>
