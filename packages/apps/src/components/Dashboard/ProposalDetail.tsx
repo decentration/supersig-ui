@@ -90,13 +90,13 @@ export const ProposalDetail: FC<ProposalDetailInterface> = ({ members, proposals
 
   const getVoteLink = (id: number) => {
     const nonce = u8aToHex(decodeAddress(supersigAccount)).toString();
-    let call_id = u8aToHex(nToU8a(id), -1, false).toString();
+    let callId = u8aToHex(nToU8a(id), -1, false).toString();
 
-    for (let k = 0; k < (37 - call_id.length); k++) {
-      call_id += '0';
+    for (let k = 0; k < (37 - callId.length); k++) {
+      callId += '0';
     }
 
-    return `/extrinsic/0x2a026d6f646c69642f7375736967${nonce.slice(26, 28)}00000000000000000000000000000000000000${call_id}`;
+    return `/extrinsic/0x2a026d6f646c69642f7375736967${nonce.slice(26, 28)}00000000000000000000000000000000000000${callId}`;
   };
 
   return (

@@ -11,8 +11,8 @@ export const chains: Chain[] = [
     definitions: soupcanDefinitions,
     name: 'Development',
     rpcEndpoints: [
-      'ws://127.0.0.1:9944',
-     
+      'ws://127.0.0.1:9944'
+
     ],
     ss58Format: 27
   },

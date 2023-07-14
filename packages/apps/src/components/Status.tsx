@@ -55,7 +55,7 @@ function filterEvents (allAccounts: string[], optionsAll?: KeyringOptions, event
     .filter((item): item is ActionStatus => !!item);
 }
 
-const  StatusComp = ({ optionsAll }: Props): React.ReactElement<Props> => {
+const StatusComp = ({ optionsAll }: Props): React.ReactElement<Props> => {
   const { queueAction } = useQueue();
   const { api, isApiReady } = useApi();
   const { allAccounts } = useAccounts();
@@ -70,6 +70,6 @@ const  StatusComp = ({ optionsAll }: Props): React.ReactElement<Props> => {
   return (
     <StatusDisplay />
   );
-}
+};
 
 export const Status = React.memo(StatusComp);

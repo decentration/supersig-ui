@@ -11,7 +11,7 @@ const webpack = require('webpack');
 
 const findPackages = require('../../scripts/findPackages.cjs');
 
-function createWebpack(context, mode = 'production') {
+function createWebpack (context, mode = 'production') {
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(context, `../${dir}/src`);
 
@@ -31,6 +31,9 @@ function createWebpack(context, mode = 'production') {
 
   return {
     context,
+    devServer: {
+      historyApiFallback: true
+    },
     entry: './src/index.tsx',
     mode,
     module: {
@@ -111,9 +114,6 @@ function createWebpack(context, mode = 'production') {
       hashFunction: 'xxhash64',
       path: path.join(context, 'build'),
       publicPath: '/'
-    },
-    devServer: {
-      historyApiFallback: true
     },
     performance: {
       hints: false
