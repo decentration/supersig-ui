@@ -1,7 +1,6 @@
 // Copyright 2017-2023 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { DeriveDemocracyLock, DeriveStakingAccount } from '@polkadot/api-derive/types';
@@ -10,7 +9,7 @@ import type { ActionStatus } from '@polkadot/react-components/Status/types';
 import type { Option } from '@polkadot/types';
 import type { ProxyDefinition, RecoveryConfig } from '@polkadot/types/interfaces';
 import type { KeyringAddress, KeyringJson$Meta } from '@polkadot/ui-keyring/types';
-import type { AccountBalance, Delegation } from '../types.js';
+import type { AccountBalance, Delegation } from '../types.ts';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -20,21 +19,21 @@ import { useAccountInfo, useApi, useBalancesAll, useBestNumber, useCall, useLedg
 import { keyring } from '@polkadot/ui-keyring';
 import { BN, BN_ZERO, formatBalance, formatNumber, isFunction } from '@polkadot/util';
 
-import Backup from '../modals/Backup.js';
-import ChangePass from '../modals/ChangePass.js';
-import DelegateModal from '../modals/Delegate.js';
-import Derive from '../modals/Derive.js';
-import IdentityMain from '../modals/IdentityMain.js';
-import IdentitySub from '../modals/IdentitySub.js';
-import MultisigApprove from '../modals/MultisigApprove.js';
-import ProxyOverview from '../modals/ProxyOverview.js';
-import RecoverAccount from '../modals/RecoverAccount.js';
-import RecoverSetup from '../modals/RecoverSetup.js';
-import UndelegateModal from '../modals/Undelegate.js';
-import { useTranslation } from '../translate.js';
-import { createMenuGroup } from '../util.js';
-import useMultisigApprovals from './useMultisigApprovals.js';
-import useProxies from './useProxies.js';
+import Backup from '../modals/Backup.tsx';
+import ChangePass from '../modals/ChangePass.tsx';
+import DelegateModal from '../modals/Delegate.tsx';
+import Derive from '../modals/Derive.tsx';
+import IdentityMain from '../modals/IdentityMain.tsx';
+import IdentitySub from '../modals/IdentitySub.tsx';
+import MultisigApprove from '../modals/MultisigApprove.tsx';
+import ProxyOverview from '../modals/ProxyOverview.tsx';
+import RecoverAccount from '../modals/RecoverAccount.tsx';
+import RecoverSetup from '../modals/RecoverSetup.tsx';
+import UndelegateModal from '../modals/Undelegate.tsx';
+import { useTranslation } from '../translate.ts';
+import { createMenuGroup } from '../util.tsx';
+import useMultisigApprovals from './useMultisigApprovals.ts';
+import useProxies from './useProxies.ts';
 
 interface Props {
   account: KeyringAddress;
@@ -222,9 +221,7 @@ function Account ({ account: { address, meta }, className = '', delegation, filt
     bestNumber && convictionLocks && setReferandaUnlock(
       (prev): ReferendaUnlockable => {
         const ids = convictionLocks
-          /* eslint-disable @typescript-eslint/no-unsafe-argument */
           .filter(({ endBlock }) => endBlock.gt(BN_ZERO) && bestNumber.gt(endBlock))
-          /* eslint-disable @typescript-eslint/no-unsafe-argument */
           .map(({ classId, refId }): [classId: BN, refId: BN] => [classId, refId]);
 
         if (JSON.stringify(prev.ids) === JSON.stringify(ids)) {

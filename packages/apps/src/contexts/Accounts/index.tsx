@@ -2,16 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import type { Contact } from '../AddressBookContext/index.js';
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { useApi } from '@polkadot/react-hooks';
 import { keyring } from '@polkadot/ui-keyring';
-
 import { generateSupersigAccounts } from '../../utils/index.js';
-import { useAddressBook } from '../AddressBookContext/index.js';
+import { useAddressBook } from '../AddressBookContext/index.tsx';
+import type { Contact } from '../AddressBookContext/index.tsx';
+
 
 interface AccountsContextProps {
   accounts: InjectedAccountWithMeta[];
@@ -22,7 +20,7 @@ interface AccountsProviderProps {
 }
 
 const AccountsContext = createContext<AccountsContextProps>({
-  accounts: []
+  accounts: [],
 });
 
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
@@ -35,7 +33,6 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
 
     if (!api || !isApiReady) {
       console.log('API is not ready yet');
-
       return;
     }
 
@@ -44,7 +41,6 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
 
     for (const account of accounts) {
       const { address, meta } = account;
-
       console.log(`Saving supersig account with address: ${address}`);
       keyring.saveAddress(address, { ...meta }, 'address');
     }
@@ -57,31 +53,36 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
       try {
         await web3Enable('Supersig UI');
         const allAccounts = await web3Accounts();
-
         console.log('Fetched accounts: ', allAccounts);
-
+  
         const contactsFromLocalStorage = JSON.parse(localStorage.getItem('contacts') || '[]');
         const allContacts = [...contacts, ...contactsFromLocalStorage];
-
+  
         // Add the addresses from the AddressBookContext to the accounts array
         console.log('Contacts at mapping point: ', allContacts);
         const accountsWithContacts = allAccounts.concat(allContacts.map((contact: Contact) => ({
           address: contact.address,
           meta: { name: contact.name, source: 'AddressBook' },
-          type: 'sr25519'
+          type: 'sr25519',
         })));
-
-        console.log('this is', accountsWithContacts);
-
+  
+        console.log('this is', accountsWithContacts); 
+  
         setAccounts(accountsWithContacts);
+  
       } catch (_error) {
         // No accounts found
         setAccounts([]);
       }
     };
-
+  
     fetchAccounts();
   }, [contacts]);
+  
+
+
+  
+  
 
   return (
     <AccountsContext.Provider value={{ accounts }}>
@@ -89,6 +90,7 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
     </AccountsContext.Provider>
   );
 };
+
 
 const useAccounts = () => useContext(AccountsContext);
 

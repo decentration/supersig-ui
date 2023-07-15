@@ -3,7 +3,7 @@
 
 import type { ReactNode } from 'react';
 import type { BN } from '@polkadot/util';
-import type { DeriveValidationOutput } from '../types.js';
+import type { DeriveValidationOutput } from '../types.ts';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -11,7 +11,7 @@ import { Checkbox, Dropdown, Input, InputNumber, MarkError, MarkWarning, Modal }
 import { useToggle } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useTranslation } from '../translate.js';
+import { useTranslation } from '../translate.ts';
 
 interface Props {
   className?: string;

@@ -13,7 +13,7 @@ import { useApi, useCall } from '@polkadot/react-hooks';
 import { AddressIdentityOtherDiscordKey } from '@polkadot/react-hooks/types';
 import { u8aToString } from '@polkadot/util';
 
-import { useTranslation } from '../translate.js';
+import { useTranslation } from '../translate.ts';
 
 interface Props {
   address: string;

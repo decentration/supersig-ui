@@ -1,14 +1,14 @@
 // Copyright 2017-2023 @polkadot/app-accounts authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountBalance } from '../types.js';
+import type { AccountBalance } from '../types.ts';
 
 import React from 'react';
 
 import { CardSummary, SummaryBox } from '@polkadot/react-components';
 import { FormatBalance } from '@polkadot/react-query';
 
-import { useTranslation } from '../translate.js';
+import { useTranslation } from '../translate.ts';
 
 interface Props {
   className?: string;

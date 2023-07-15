@@ -3,7 +3,7 @@
 
 import type { ActionStatus } from '@polkadot/react-components/Status/types';
 import type { HexString } from '@polkadot/util/types';
-import type { ModalProps } from '../types.js';
+import type { ModalProps } from '../types.ts';
 
 import React, { useCallback, useState } from 'react';
 
@@ -13,8 +13,8 @@ import { keyring } from '@polkadot/ui-keyring';
 import { assert, BN, u8aToString } from '@polkadot/util';
 import { validateAddress } from '@polkadot/util-crypto';
 
-import useKnownAddresses from '../Accounts/useKnownAddresses.js';
-import { useTranslation } from '../translate.js';
+import useKnownAddresses from '../Accounts/useKnownAddresses.ts';
+import { useTranslation } from '../translate.ts';
 
 interface Props extends ModalProps {
   className?: string;

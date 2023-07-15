@@ -11,7 +11,7 @@ const webpack = require('webpack');
 
 const findPackages = require('../../scripts/findPackages.cjs');
 
-function createWebpack (context, mode = 'production') {
+function createWebpack(context, mode = 'production') {
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(context, `../${dir}/src`);
 
@@ -31,10 +31,7 @@ function createWebpack (context, mode = 'production') {
 
   return {
     context,
-    devServer: {
-      historyApiFallback: true
-    },
-    entry: './src/index.js',
+    entry: './src/index.tsx',
     mode,
     module: {
       rules: [
@@ -115,6 +112,9 @@ function createWebpack (context, mode = 'production') {
       path: path.join(context, 'build'),
       publicPath: '/'
     },
+    devServer: {
+      historyApiFallback: true
+    },
     performance: {
       hints: false
     },
@@ -141,9 +141,9 @@ function createWebpack (context, mode = 'production') {
     resolve: {
       alias,
       extensionAlias: {
-        '.js': ['.js', '.ts', '.js']
+        '.js': ['.js', '.ts', '.tsx']
       },
-      extensions: ['.js', '.jsx', '.mjs', '.ts', '.js'],
+      extensions: ['.js', '.jsx', '.mjs', '.ts', '.tsx'],
       fallback: {
         assert: require.resolve('assert/'),
         crypto: require.resolve('crypto-browserify'),

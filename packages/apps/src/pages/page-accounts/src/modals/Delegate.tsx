@@ -3,7 +3,7 @@
 
 import type { Conviction } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
-import type { AmountValidateState } from '../Accounts/types.js';
+import type { AmountValidateState } from '../Accounts/types.ts';
 
 import React, { useState } from 'react';
 
@@ -12,8 +12,8 @@ import { useApi } from '@polkadot/react-hooks';
 import { BalanceFree } from '@polkadot/react-query';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useTranslation } from '../translate.js';
-import ValidateAmount from './InputValidateAmount.js';
+import { useTranslation } from '../translate.ts';
+import ValidateAmount from './InputValidateAmount.tsx';
 
 interface Props {
   onClose: () => void;

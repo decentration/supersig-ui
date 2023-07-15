@@ -7,7 +7,7 @@ import type { AddressFlags } from '@polkadot/react-hooks/types';
 import type { Table } from '@polkadot/test-support/pagesElements';
 import type { u32 } from '@polkadot/types';
 import type { AccountId, Multisig, ProxyDefinition, Timepoint, Voting, VotingDelegating } from '@polkadot/types/interfaces';
-import type { AccountRow } from '../../test/pageElements/AccountRow.js';
+import type { AccountRow } from '../../test/pageElements/AccountRow.tsx';
 
 import { fireEvent, screen, within } from '@testing-library/react';
 
@@ -22,7 +22,7 @@ import { TypeRegistry } from '@polkadot/types/create';
 import { keyring } from '@polkadot/ui-keyring';
 import { BN } from '@polkadot/util';
 
-import { AccountsPage } from '../../test/pages/accountsPage.js';
+import { AccountsPage } from '../../test/pages/accountsPage.tsx';
 
 // FIXME isSplit Table
 // eslint-disable-next-line jest/no-disabled-tests

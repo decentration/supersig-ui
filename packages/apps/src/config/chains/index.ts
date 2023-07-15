@@ -11,7 +11,7 @@ export const chains: Chain[] = [
     definitions: soupcanDefinitions,
     name: 'Soupcan 🥫',
     rpcEndpoints: [
-      'wss://soupcan1.jelliedowl.com'
+      'wss://soupcan1.jelliedowl.com',
     ],
     ss58Format: 27
   },
@@ -29,7 +29,7 @@ export const chains: Chain[] = [
     definitions: statemineDefinitions,
     name: 'Statemind 🧠',
     rpcEndpoints: [
-      'wss://statemind.jelliedowl.com'
+      'wss://statemind.jelliedowl.com',
     ],
     ss58Format: 2
   },
@@ -38,7 +38,7 @@ export const chains: Chain[] = [
     definitions: statemineDefinitions,
     name: 'Development',
     rpcEndpoints: [
-      'ws://127.0.0.1:9944'
+      'ws://127.0.0.1:9944',
     ],
     ss58Format: 42
   }

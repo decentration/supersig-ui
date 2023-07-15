@@ -14,8 +14,8 @@ import { Page } from '@polkadot/test-support/pages/Page';
 import { assertText, clickButton } from '@polkadot/test-support/utils';
 import { settings } from '@polkadot/ui-settings';
 
-import AccountOverview from '../../src/Accounts/index.js';
-import { AccountRow } from '../pageElements/AccountRow.js';
+import AccountOverview from '../../src/Accounts/index.tsx';
+import { AccountRow } from '../pageElements/AccountRow.tsx';
 
 const NOOP_CHANGE = () => undefined;
 

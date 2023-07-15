@@ -20,7 +20,7 @@ export const ChainSelector = () => {
     setActiveRpc: setSelectedRpc } = useChain();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [rpc, setRpc] = useState<string>(selectedRpc);
+  const [rpc, setRpc] = useState<string>(selectedRpc); 
   const [chain, setChain] = useState<Chain>(selectedChain);
   const [customRpc, setCustomRpc] = useState<string>(''); // custom RPC URL
   const [customChains, setCustomChains] = useState<Chain[]>([]); //
@@ -79,6 +79,7 @@ export const ChainSelector = () => {
               </div>
             </details>
           ))}
+
           {/* Custom RPC URL input field */}
           <details>
             <summary className='font-semibold text-black text-sm'>
@@ -86,28 +87,29 @@ export const ChainSelector = () => {
             </summary>
             <div>
               <input
+                type="text"
+                placeholder="Enter custom RPC URL"
                 className='input-field'
-                onChange={(event) => setCustomRpc(event.target.value)}
-                placeholder='Enter custom RPC URL'
-                type='text'
                 value={customRpc}
+                onChange={(event) => setCustomRpc(event.target.value)}
               />
               <button
-                onClick={() => {
-                  setCustomChains(customChains.concat({
-                    decimals: 12, // add default value or some meaningful value
-                    definitions: {}, // add default value or some meaningful value
-                    name: 'Custom',
-                    rpcEndpoints: [customRpc],
-                    ss58Format: 42 // add default value or some meaningful value
-                  }));
-                  setCustomRpc('');
-                }}
+               onClick={() => {
+                setCustomChains(customChains.concat({
+                  name: 'Custom',
+                  rpcEndpoints: [customRpc],
+                  ss58Format: 42, // add default value or some meaningful value
+                  definitions: {}, // add default value or some meaningful value
+                  decimals: 12, // add default value or some meaningful value
+                }));
+                setCustomRpc('');
+              }}
               >
                 Add Custom RPC
               </button>
             </div>
           </details>
+
           <button
             className='select-button block w-full text-left px-4 py-2 text-black hover:bg-gray-100'
             onClick={() => {
@@ -124,4 +126,5 @@ export const ChainSelector = () => {
       )}
     </div>
   );
+
 };
