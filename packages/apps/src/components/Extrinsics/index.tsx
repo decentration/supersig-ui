@@ -28,7 +28,7 @@ function createItemsRef (): TabItem[] {
 }
 
 function ExtrinsicsApp ({ basePath }: Props): React.ReactElement<Props> {
-  const [decoded, setDecoded] = useState<DecodedExtrinsic | null>(null);
+  const [decoded] = useState<DecodedExtrinsic | null>(null);
   const itemsRef = useRef(createItemsRef());
 
   return (
@@ -41,10 +41,7 @@ function ExtrinsicsApp ({ basePath }: Props): React.ReactElement<Props> {
         <Route path={basePath}>
           <Route
             element={
-              <Decoder
-                defaultValue={decoded && decoded.hex}
-                setLast={setDecoded}
-              />
+              <Decoder defaultValue={decoded && decoded.hex} />
             }
             path='decode/:encoded?'
           />

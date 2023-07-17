@@ -31,6 +31,9 @@ function createWebpack(context, mode = 'production') {
 
   return {
     context,
+    devServer: {
+      historyApiFallback: true
+    },
     entry: './src/index.tsx',
     mode,
     module: {

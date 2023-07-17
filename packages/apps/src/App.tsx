@@ -27,22 +27,13 @@ import { ApiCtxRoot } from '@polkadot/react-api';
 import Signer from '@polkadot/react-signer';
 import { settings } from '@polkadot/ui-settings';
 
+import { AddressBook } from './components/AddressBook/index.js';
 import Decoder from './components/Extrinsics/Decoder.js';
 import Submission from './components/Extrinsics/Submission.js';
-import {
-    Accounts,
-    Dashboard,
-    Header,
-    LoadingWrapper,
-    Sidebar,
-    Status,
-} from './components/index.js';
-import {
-    AccountsProvider,
-    ChainProvider,
-    ToastProvider,
-    useChain,
-} from './contexts/index.js';
+import { Accounts, Dashboard, Header, LoadingWrapper, Sidebar, Status } from './components/index.js';
+import Settings from './components/Settings/index.js';
+import { AddressBookProvider } from './contexts/AddressBookContext/index.js';
+import { AccountsProvider, ChainProvider, ToastProvider, useChain } from './contexts/index.js';
 import { darkTheme, lightTheme } from './themes.js';
 import { AddressBookProvider } from './contexts/AddressBookContext';
 import { AddressBook } from './components/AddressBook';
