@@ -1,6 +1,8 @@
 // Copyright 2017-2023 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable */
+
 import type { Balance } from '../../types/index.js';
 
 import { Backdrop, Box, Checkbox, CircularProgress, FormControlLabel, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';

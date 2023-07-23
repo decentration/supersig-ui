@@ -8,6 +8,8 @@ import type { OverrideBundleType } from '@polkadot/types/types';
 /* eslint-disable quotes */
 /* eslint-disable quote-props */
 /* eslint-disable sort-keys */
+/* tslint:disable */
+
 
 export const typesBundle = {
   "chain": {
@@ -56516,8 +56518,9 @@ export const typesBundle = {
           "types": {
             "CallId": "u32",
             "FetchListProposals": {
-              "no_of_members": "u32",
-              "proposals_info": "ProposalStates"
+             
+              "proposals_info": "ProposalStates",
+               "no_of_members": "u32",
             },
             "FetchProposalState": {
               "no_of_members": "u32",

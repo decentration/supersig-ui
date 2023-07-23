@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
+  "rules": {
+    "object-literal-sort-keys": false
+  },
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "baseUrl": "./packages",
