@@ -25,10 +25,14 @@ const AccountsContext = createContext<AccountsContextProps>({
   accounts: []
 });
 
+
+
 const AccountsProvider = ({ children }: AccountsProviderProps) => {
   const { api, chainSS58, isApiReady } = useApi();
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const { contacts } = useAddressBook();
+
+  
 
   useEffect(() => {
     console.log('Running supersig accounts effect');
@@ -45,8 +49,11 @@ const AccountsProvider = ({ children }: AccountsProviderProps) => {
     for (const account of accounts) {
       const { address, meta } = account;
 
+      // ensure the genesisHash is a hexadecimal string prefixed by 0x.
+      const adjustedMeta = { name: meta.name, source: meta.source }; 
+
       console.log(`Saving supersig account with address: ${address}`);
-      keyring.saveAddress(address, { ...meta }, 'address');
+      keyring.saveAddress(address, adjustedMeta, 'address');
     }
   }, [api, isApiReady, chainSS58]);
 
