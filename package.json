@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "analyze": "yarn clean && BUILD_ANALYZE=1 yarn run build:code && yarn source-map-explorer packages/apps/build/app.*.js",
-    "build": "yarn run build:i18n && yarn run build:code",
+    "build": "yarn run build:i18n && yarn run build:code --output public",
     "build:before": "yarn build:images && yarn build:typesBundle",
     "build:code": "NODE_ENV=production yarn polkadot-dev-build-ts",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs && node ./scripts/i18nSort.cjs",
