@@ -7,13 +7,12 @@ import type { Balance, MemberInfo } from '../../types/index.js';
 import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material';
 import React from 'react';
 
+import { AddressSmall } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { BN_ZERO } from '@polkadot/util';
 
-import { formatAccount, formatBalance } from '../../utils/index.js';
+import { formatBalance } from '../../utils/index.js';
 import { ExpandMoreIcon } from '../Icon/index.js';
-import { AddressSmall } from '@polkadot/react-components';
-
 
 interface BalanceDetailInterface {
   members: Array<MemberInfo>;
@@ -42,8 +41,8 @@ export const BalanceDetail: FC<BalanceDetailInterface> = ({ members = [] }) => {
         {members.map((member, index) => (
           <Box key={index}>
             {
-            
-            <AddressSmall value={member.account} /> }
+
+              <AddressSmall value={member.account} /> }
             {formatBalance(member.balance, decimals + 6)} MUNIT
           </Box>
         ))}

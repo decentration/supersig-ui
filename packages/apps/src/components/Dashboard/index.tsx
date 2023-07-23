@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Account, Balance, MemberInfo, MemberRole, ProposalsInfo, SupersigInfo } from '../../types/index.js';
-import { Link } from 'react-router-dom';
+
 import { Backdrop, Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { AddressSmall } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
@@ -17,17 +18,18 @@ import { Summary } from './Summary.js';
 
 const sxs = {
   button: {
-    backgroundColor: '#fff', 
-    color: '#000',
-    borderColor: '#000',
-    marginRight: '10px',
-    fontFamily: 'Avenir, sans-serif',
-    textTransform: 'none', // no uppercase
     '&:hover': {
-      color: '#fff', 
-      borderColor: '#fff', 
-      backgroundColor: '#000'
-    }
+      backgroundColor: '#000',
+      borderColor: '#fff',
+      color: '#fff'
+    },
+    backgroundColor: '#fff',
+    borderColor: '#000',
+    color: '#000',
+    fontFamily: 'Avenir, sans-serif',
+    marginRight: '10px',
+    textTransform: 'none' // no uppercase
+
   },
   buttonGroup: {
     display: 'flex',
@@ -36,12 +38,10 @@ const sxs = {
   dashboard: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 3, 
+    gap: 3,
     padding: 5
   }
 };
-
-
 
 export const Dashboard = () => {
   const { api, chainSS58, isApiReady, tokenDecimals: decimals } = useApi();
@@ -100,7 +100,9 @@ export const Dashboard = () => {
         })
       );
 
-      const proposals: ProposalsInfo = (
+      const res = await (api.rpc as any).superSig.listProposals(account);
+
+      const proposals = (
         await (api.rpc as any).superSig.listProposals(account)
       ).toPrimitive();
 
@@ -133,7 +135,7 @@ export const Dashboard = () => {
     init();
   }, [api, supersigAccounts]);
 
-useEffect(() => {
+  useEffect(() => {
     if (!api || !isApiReady) {
       return;
     }
@@ -162,7 +164,7 @@ useEffect(() => {
 
     getSuperSigAddress();
   }, [api, isApiReady, nonce, chainSS58]);
-  
+
   return (
     <>
       <Box sx={{ ...sxs.dashboard }}>
@@ -185,12 +187,12 @@ useEffect(() => {
               clickHandler: () => false,
               title: 'Propose'
             }
-          ].map(({ clickHandler, title }, index) => (
+          ].map(({ title }, index) => (
             <Button
-              key={index}
               component={Link}
-              to="/extrinsic"
+              key={index}
               sx={{ ...sxs.button }}
+              to='/extrinsic'
               variant='outlined'
             >
               {title}
@@ -227,7 +229,7 @@ useEffect(() => {
                     component='th'
                     scope='row'
                   >
-                  <AddressSmall value={account} />
+                    <AddressSmall value={account} />
                   </TableCell>
                   <TableCell>
                     <ProposalDetail
